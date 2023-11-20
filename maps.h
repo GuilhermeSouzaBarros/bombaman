@@ -11,8 +11,13 @@
 #define STD_SIZE_DIF_Y 4
 #define SCREEN_BORDER 4
 
-typedef struct Map {
+typedef struct Barriers {
     Rectangle barriers[15][15];
+    int types[15][15];
+} Barriers;
+
+typedef struct Map {
+    Barriers barriers;
     int num_barriers_line;
     int num_barriers_coln;
     Color color;

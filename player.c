@@ -1,4 +1,30 @@
 #include "player.h"
+#include <stdio.h>
+
+void colBombaPlayer(Bomb bombs[], int n, Player *player) {
+    for (int i = 0; i < n; i++) {
+        if (CheckCollisionRecs(player->pos, bombs[i].explosion_down) &&
+                bombs[i].hasExploded) {
+            player->vivo = 0;
+            break;
+        }
+        if (CheckCollisionRecs(player->pos, bombs[i].explosion_up) &&
+                bombs[i].hasExploded) {
+            player->vivo = 0;
+            break;
+        }
+        if (CheckCollisionRecs(player->pos, bombs[i].explosion_left) &&
+                bombs[i].hasExploded) {
+            player->vivo = 0;
+            break;
+        }
+        if (CheckCollisionRecs(player->pos, bombs[i].explosion_right) &&
+                bombs[i].hasExploded) {
+            player->vivo = 0;
+            break;
+        }
+    }
+}
 
 void update_player_pos(Player *h, Map *m){
     int vel_x = 0, vel_y = 0;
@@ -11,7 +37,7 @@ void update_player_pos(Player *h, Map *m){
         h->pos.x += vel_x;
         for (int i = 0; i < m->num_barriers_line; i++) {
             for (int j = 0; j < m->num_barriers_coln; j++) {
-                if (CheckCollisionRecs(m->barriers[i][j], h->pos)) {
+                if (CheckCollisionRecs(m->barriers.barriers[i][j], h->pos)) {
                     h->pos.x -= vel_x;
                     if (vel_x > 0) { 
                         vel_x--;
@@ -34,7 +60,7 @@ void update_player_pos(Player *h, Map *m){
         h->pos.y += vel_y;
         for (int i = 0; i < m->num_barriers_line; i++) {
             for (int j = 0; j < m->num_barriers_coln; j++) {
-                if (CheckCollisionRecs(m->barriers[i][j], h->pos)) {
+                if (CheckCollisionRecs(m->barriers.barriers[i][j], h->pos)) {
                     h->pos.y -= vel_y;
                     if (vel_y > 0) vel_y--; else vel_y++;
                     col = 1;

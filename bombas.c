@@ -17,6 +17,17 @@ void draw_bomb(Bomb bombs[], int n){
     }
 }
 
+void colBombas(Bomb bombs[], int bomb, int n) {
+    for (int i = 0; i < n; i++) {
+        if (i != bomb && bombs[i].hasExploded) {
+            if (CheckCollisionRecs(bombs[bomb].pos, bombs[i].explosion_down)) bombs[bomb].fastExplode = 1;
+            if (CheckCollisionRecs(bombs[bomb].pos, bombs[i].explosion_up)) bombs[bomb].fastExplode = 1;
+            if (CheckCollisionRecs(bombs[bomb].pos, bombs[i].explosion_left)) bombs[bomb].fastExplode = 1;
+            if (CheckCollisionRecs(bombs[bomb].pos, bombs[i].explosion_right)) bombs[bomb].fastExplode = 1;
+        }
+    }
+}
+
 void update_bomb(Map *actual_map, Rectangle player, Bomb bombs[], int n){
     if(IsKeyPressed(KEY_SPACE)){
         int hero_tile_x = ((int)player.x + STD_SIZE_ENT_X / 2);
@@ -27,7 +38,8 @@ void update_bomb(Map *actual_map, Rectangle player, Bomb bombs[], int n){
             if(bombs[i].isActive == 0){
                 bombs[i].isActive = 1;
                 bombs[i].isActiveFirstFrame = 1;
-                bombs[i].growth_ratio = 7;
+                bombs[i].hasExploded = 0;
+                bombs[i].growth_ratio = 10;
                 bombs[i].pos = (Rectangle) {hero_tile_x, hero_tile_y, STD_SIZE_ENT_X, STD_SIZE_ENT_Y};
                 bombs[i].explosion_right = (Rectangle) {hero_tile_x, hero_tile_y, STD_SIZE_ENT_X, STD_SIZE_ENT_Y};
                 bombs[i].explosion_left = (Rectangle) {hero_tile_x, hero_tile_y, STD_SIZE_ENT_X, STD_SIZE_ENT_Y};
@@ -42,26 +54,20 @@ void update_bomb(Map *actual_map, Rectangle player, Bomb bombs[], int n){
     }
     for(int i = 0; i < n; i++){
         if(bombs[i].isActive){
+            colBombas(bombs, i, n);
             if (!bombs[i].hasColision && !CheckCollisionRecs(bombs[i].pos, player)) {
                 bombs[i].hasColision = 1;
-                actual_map->barriers[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = bombs[i].pos;
-            }
-            for (int j = 0; j < n; j++) {
-                if (i != j) {
-                    if (CheckCollisionRecs(bombs[i].pos, bombs[j].explosion_down)) bombs[i].fastExplode = 1;
-                    if (CheckCollisionRecs(bombs[i].pos, bombs[j].explosion_up)) bombs[i].fastExplode = 1;
-                    if (CheckCollisionRecs(bombs[i].pos, bombs[j].explosion_left)) bombs[i].fastExplode = 1;
-                    if (CheckCollisionRecs(bombs[i].pos, bombs[j].explosion_right)) bombs[i].fastExplode = 1;
-                }
+                actual_map->barriers.barriers[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = bombs[i].pos;
             }
             if((fabs(bombs[i].time - GetTime()) > 3 && fabs(bombs[i].time - GetTime()) < 5) || bombs[i].fastExplode){
                 if (bombs[i].isActiveFirstFrame) {
-                    actual_map->barriers[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = (Rectangle) {-40, -40, 0, 0};
+                    actual_map->barriers.barriers[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = (Rectangle) {-40, -40, 0, 0};
                     bombs[i].explosion_right = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
                     bombs[i].explosion_left = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
                     bombs[i].explosion_up = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
                     bombs[i].explosion_down = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
                     bombs[i].isActiveFirstFrame = 0;
+                    bombs[i].hasExploded = 1;
                 }
                 Rectangle verify_bomb;
                 Rectangle rectangle_bomb;
@@ -129,6 +135,10 @@ void update_bomb(Map *actual_map, Rectangle player, Bomb bombs[], int n){
                 }
             }
             if(fabs(bombs[i].time - GetTime()) > 5){
+                bombs[i].explosion_right = (Rectangle) {-40, -40, 0, 0};
+                bombs[i].explosion_left = (Rectangle) {-40, -40, 0, 0};
+                bombs[i].explosion_down = (Rectangle) {-40, -40, 0, 0};
+                bombs[i].explosion_up = (Rectangle) {-40, -40, 0, 0};
                 bombs[i].isActive = 0;
             }
         }

@@ -11,7 +11,6 @@ typedef struct Game {
     Player player;
     int screenWidth;
     int screenHeight;
-    int gameover;
 } Game;
 
 void InitGame(Game *g);

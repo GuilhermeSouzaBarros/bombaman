@@ -4,7 +4,8 @@
 int barrier_collision(Map *map, Rectangle target){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
-            if(CheckCollisionRecs(target, map->barriers[i][j])){
+            if(CheckCollisionRecs(target, map->barriers.barriers[i][j]) &&
+                map->barriers.types[i][j] == 1){
                 return 1;
             }
         }
@@ -19,9 +20,11 @@ void map0_setup(Map *map0){
         for (int j = 0; j < map0->num_barriers_coln; j++) {
             if ((i == 0 || j == 0 || i == 14 || j == 14) ||
                 (i % 2 == 0 && j % 2 == 0)) {
-                map0->barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
+                map0->barriers.barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
+                map0->barriers.types[i][j] = 1;
             } else {
-                map0->barriers[i][j] = (Rectangle) {-40, -40, 0, 0};
+                map0->barriers.barriers[i][j] = (Rectangle) {-40, -40, 0, 0};
+                map0->barriers.types[i][j] = 0;
             }
         }
     }
@@ -33,7 +36,7 @@ void map0_setup(Map *map0){
 void draw_map(Map *map){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
-            DrawRectangleRec(map->barriers[i][j], GRAY);
+            DrawRectangleRec(map->barriers.barriers[i][j], GRAY);
         }
     }
 }

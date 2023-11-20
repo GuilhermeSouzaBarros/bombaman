@@ -21,7 +21,7 @@ int main(void)
 
     while (!WindowShouldClose()) {
         UpdateDrawFrame(&game);
-        if(game.gameover) break;
+        if(!game.player.vivo) break;
     }
 
     while(!IsKeyDown(KEY_ENTER)) {

@@ -12,6 +12,7 @@ typedef struct Bomb{
     int growth_ratio;
     int isActive;
     int isActiveFirstFrame;
+    int hasExploded;
     int distance;
     double time;
     int hasColision;
