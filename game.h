@@ -8,9 +8,11 @@ typedef struct Game {
     Map maps[10];
     int num_maps;
     int curr_map;
-    Player player;
+    Player player1;
+    Player player2;
     int screenWidth;
     int screenHeight;
+    int winner;
 } Game;
 
 void InitGame(Game *g);

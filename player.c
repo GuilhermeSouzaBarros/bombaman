@@ -1,6 +1,18 @@
 #include "player.h"
 #include <stdio.h>
 
+void initPlayer(Player* player, Color color, Rectangle pos) {
+    player->pos = pos;
+    player->color = color;
+    player->speed = 4;
+    player->num_bombs = 5;
+    for (int i = 0; i < 5; i++) {
+        player->bombs[i].isActive = 0;
+        player->bombs[i].distance = 80;
+    }
+    player->vivo = 1;
+}
+
 void colBombaPlayer(Bomb bombs[], int n, Player *player) {
     for (int i = 0; i < n; i++) {
         if (CheckCollisionRecs(player->pos, bombs[i].explosion_down) &&
@@ -26,12 +38,7 @@ void colBombaPlayer(Bomb bombs[], int n, Player *player) {
     }
 }
 
-void update_player_pos(Player *h, Map *m){
-    int vel_x = 0, vel_y = 0;
-    if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) vel_x += h->speed;
-    if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) vel_x -= h->speed;
-    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) vel_y -= h->speed;
-    if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) vel_y += h->speed;
+void updateMovement(Player* h, Map* m, int vel_x, int vel_y) {
     do {
         int col=0;
         h->pos.x += vel_x;
@@ -74,4 +81,20 @@ void update_player_pos(Player *h, Map *m){
         }
         vel_y = 0;
     } while (vel_y);
+}
+
+void updatePlayersPos(Player *p1, Player *p2, Map *m){
+    int vel1_x = 0, vel1_y = 0;
+    if (IsKeyDown(KEY_W)) vel1_y -= p1->speed;
+    if (IsKeyDown(KEY_A)) vel1_x -= p1->speed;
+    if (IsKeyDown(KEY_S)) vel1_y += p1->speed;
+    if (IsKeyDown(KEY_D)) vel1_x += p1->speed;
+    updateMovement(p1, m, vel1_x, vel1_y);
+
+    int vel2_x = 0, vel2_y = 0;
+    if (IsKeyDown(KEY_I)) vel2_y -= p2->speed;
+    if (IsKeyDown(KEY_J)) vel2_x -= p2->speed;
+    if (IsKeyDown(KEY_K)) vel2_y += p2->speed;
+    if (IsKeyDown(KEY_L)) vel2_x += p2->speed;
+    updateMovement(p2, m, vel2_x, vel2_y);
 }

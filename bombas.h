@@ -20,6 +20,8 @@ typedef struct Bomb{
 }Bomb;
 
 void draw_bomb(Bomb bombs[], int n);
-void update_bomb(Map *actual_map, Rectangle player, Bomb bombs[], int n);
+void updateBombs(Map *map,
+    Rectangle player1, Bomb player1bombs[], int player1nb,
+    Rectangle player2, Bomb player2bombs[], int player2nb);
 
 #endif

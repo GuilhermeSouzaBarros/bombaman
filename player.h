@@ -9,13 +9,13 @@ typedef struct Player {
     Rectangle pos;
     Color color;
     int speed;
-    int draw_bomb;
     int num_bombs;
     Bomb bombs[5];
     int vivo;
 } Player;
 
+void initPlayer(Player* player, Color color, Rectangle pos);
 void colBombaPlayer(Bomb bombs[], int n, Player *player);
-void update_player_pos(Player *h, Map *m);
+void updatePlayersPos(Player* p1, Player* p2, Map *m);
 
 #endif
