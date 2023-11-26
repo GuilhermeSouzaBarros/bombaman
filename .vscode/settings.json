@@ -6,5 +6,6 @@
         "player.h": "c",
         "stdio.h": "c",
         "maps.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

@@ -1,5 +1,5 @@
-bomba: main.o game.o player.o bombas.o maps.o
-	gcc game.o main.o player.o bombas.o maps.o -o bomba -lraylib -lm 
+bomba: main.o game.o player.o bombas.o maps.o menu.o
+	gcc game.o main.o player.o bombas.o maps.o menu.o -o bomba -lraylib -lm 
 
 main.o: main.c
 	gcc -g -c main.c
@@ -16,3 +16,5 @@ bombas.o: bombas.c bombas.h
 game.o: game.c game.h
 	gcc -g -c game.c
 
+menu.o: menu.c menu.h
+	gcc -g -c menu.c

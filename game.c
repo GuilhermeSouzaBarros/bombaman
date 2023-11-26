@@ -1,20 +1,21 @@
 #include "game.h"
-#include <raylib.h>
 #include "bombas.h"
 #include "maps.h"
 
-void InitGame(Game *g){
-    g->curr_map = 0;
-    g->num_maps = 10;
-    initPlayer(&g->player1, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
-    initPlayer(&g->player2, WHITE, (Rectangle){524, 524, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
-    g->winner = 0;
-    map0_setup(&g->maps[0]);
+#include "raylib.h"
+#include "stdlib.h"
+
+Game* initGame(Map map, char* p1_nome, char* p2_nome){
+    Game* g = (Game*)malloc(sizeof(Game));
+    g->map = map;
+    initPlayer(&g->player1, p1_nome, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
+    initPlayer(&g->player2, p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
+    return g;
 }
 
-void UpdateGame(Game *g) {
-    updatePlayersPos(&g->player1, &g->player2, &g->maps[g->curr_map]);
-    updateBombs(&g->maps[g->curr_map],
+void updateGame(Game *g) {
+    updatePlayersPos(&g->player1, &g->player2, &g->map);
+    updateBombs(&g->map,
         g->player1.pos, g->player1.bombs, g->player1.num_bombs, 
         g->player2.pos, g->player2.bombs, g->player2.num_bombs);
     colBombaPlayer(g->player1.bombs, g->player1.num_bombs, &g->player1);
@@ -25,9 +26,8 @@ void UpdateGame(Game *g) {
 
 void DrawGame(Game *g) {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawRectangle(0, 0, g->screenWidth, g->screenHeight, DARKGRAY);
-    draw_map(&g->maps[g->curr_map]);
+    ClearBackground(DARKGRAY);
+    draw_map(&g->map);
     draw_bomb(g->player1.bombs, g->player1.num_bombs);
     draw_bomb(g->player2.bombs, g->player2.num_bombs);
     DrawRectangleRec(g->player1.pos, g->player1.color);
@@ -36,7 +36,7 @@ void DrawGame(Game *g) {
     EndDrawing();
 }
 
-void UpdateDrawFrame(Game *g) {
-    UpdateGame(g);
-    DrawGame(g);
+void gameLoop(Game* game) {
+    updateGame(game);
+    DrawGame(game);
 }

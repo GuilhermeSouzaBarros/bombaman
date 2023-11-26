@@ -4,20 +4,15 @@
 #ifndef GAME
 #define GAME
 
-typedef struct Game { 
-    Map maps[10];
-    int num_maps;
-    int curr_map;
+typedef struct Game {
+    Map map;
     Player player1;
     Player player2;
-    int screenWidth;
-    int screenHeight;
-    int winner;
 } Game;
 
-void InitGame(Game *g);
-void UpdateGame(Game *g);
+Game* initGame(Map map, char* p1_nome, char* p2_nome);
+void updateGame(Game *g);
 void DrawGame(Game *g);
-void UpdateDrawFrame(Game *g);
+void gameLoop(Game *g);
 
 #endif

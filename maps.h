@@ -3,6 +3,9 @@
 #ifndef MAPS
 #define MAPS
 
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 #define STD_SIZE_X 40
 #define STD_SIZE_Y 40
 #define STD_SIZE_ENT_X 32
@@ -21,12 +24,10 @@ typedef struct Map {
     int num_barriers_line;
     int num_barriers_coln;
     Color color;
-    int next_map;
-    int prev_map;
 } Map;
 
 int barrier_collision(Map *map, Rectangle target);
-void map0_setup(Map *map0);
+Map mapSetup(int num_map);
 void draw_map(Map *map);
 
 #endif

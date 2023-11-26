@@ -1,14 +1,21 @@
 #include "player.h"
-#include <stdio.h>
 
-void initPlayer(Player* player, Color color, Rectangle pos) {
+#include <stdio.h>
+#include <string.h>
+
+void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     player->pos = pos;
     player->color = color;
+    strcpy(player->nome, nome);
     player->speed = 4;
     player->num_bombs = 5;
     for (int i = 0; i < 5; i++) {
         player->bombs[i].isActive = 0;
         player->bombs[i].distance = 80;
+        player->bombs[i].explosion_up    = (Rectangle){-40, -40, 0, 0};
+        player->bombs[i].explosion_left  = (Rectangle){-40, -40, 0, 0};
+        player->bombs[i].explosion_down  = (Rectangle){-40, -40, 0, 0};
+        player->bombs[i].explosion_right = (Rectangle){-40, -40, 0, 0};
     }
     player->vivo = 1;
 }
