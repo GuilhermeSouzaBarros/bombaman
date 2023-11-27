@@ -44,6 +44,10 @@ void draw_map(Map *map){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             DrawRectangleRec(map->barriers.barriers[i][j], GRAY);
+            if (i != 0 && i != 14 && j != 0 && j != 14) {
+                DrawRectangleLinesEx(map->barriers.barriers[i][j], 1, BLACK);
+            }
         }
     }
+    DrawRectangleLinesEx((Rectangle){39, 39, 522, 522}, 1, BLACK);
 }

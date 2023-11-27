@@ -32,7 +32,10 @@ void DrawGame(Game *g) {
     draw_bomb(g->player2.bombs, g->player2.num_bombs);
     DrawRectangleRec(g->player1.pos, g->player1.color);
     DrawRectangleRec(g->player2.pos, g->player2.color);
-    DrawRectangleRec((Rectangle){600, 0, 200, 600}, BLACK);
+
+    DrawText(g->player1.nome, 630, 5, 30, g->player1.color);
+    DrawText(g->player2.nome, 630, 40, 30, g->player2.color);
+
     EndDrawing();
 }
 
