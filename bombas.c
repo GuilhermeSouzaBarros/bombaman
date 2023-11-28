@@ -17,8 +17,22 @@ void draw_bomb(Bomb bombs[], int n){
     }
 }
 
+int tileHasBomb(Bomb bombs[], int n, int x, int y) {
+    x += 16;
+    y += 16;
+    x /= 40;
+    y /= 40;
+    for (int i = 0; i < n; i ++) {
+        if (bombs[i].isActive) {
+            if (((int)bombs[i].pos.x)/40 == x && ((int)bombs[i].pos.y)/40 == y) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 void initBomb(Bomb* bomb, int x, int y, Map* map) {
-    map->barriers.types[x][y] = 2;
     x = x * 40 + 4;
     y = y * 40 + 4;
     bomb->pos = (Rectangle) {x, y, STD_SIZE_ENT_X, STD_SIZE_ENT_Y};
@@ -29,7 +43,7 @@ void initBomb(Bomb* bomb, int x, int y, Map* map) {
     bomb->isActive = 1;
     bomb->isActiveFirstFrame = 1;
     bomb->hasExploded = 0;
-    bomb->growth_ratio = 10;
+    bomb->growth_ratio = 2;
     bomb->time = GetTime();
     bomb->hasColision = 0;
     bomb->fastExplode = 0;
@@ -69,13 +83,13 @@ void colBombas(Bomb bombsp1[], int n, Bomb bombsp2[], int m) {
     colPlayerBombas(bombsp2, n, bombsp2, m);
 }
 
-void placeBomb (Rectangle player, Map* map, Bomb bombs[], int n_bombs) {
+void placeBomb (Rectangle player, Map* map, Bomb bombsp1[], int n1_bombs, Bomb bombsp2[], int n2_bombs) {
     int hero_tile_x = ((int)player.x + STD_SIZE_ENT_X / 2) / 40;
     int hero_tile_y = ((int)player.y + STD_SIZE_ENT_Y / 2) / 40;
-    if (!map->barriers.types[hero_tile_x][hero_tile_y]) {
-        for(int i = 0; i < n_bombs; i++){
-            if(bombs[i].isActive == 0){
-                initBomb(&bombs[i], hero_tile_x, hero_tile_y, map);
+    if (!tileHasBomb(bombsp1, n1_bombs, player.x, player.y) && !tileHasBomb(bombsp2, n2_bombs, player.x, player.y)) {
+        for(int i = 0; i < n1_bombs; i++){
+            if(bombsp1[i].isActive == 0){
+                initBomb(&bombsp1[i], hero_tile_x, hero_tile_y, map);
                 return;
             }
         }
@@ -87,12 +101,10 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
         if(bombs[i].isActive){
             if ((fabs(bombs[i].time - GetTime()) > 3 && fabs(bombs[i].time - GetTime()) < 5) || bombs[i].fastExplode){
                 if (bombs[i].isActiveFirstFrame) {
-                    map->barriers.barriers[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = (Rectangle) {-40, -40, 0, 0};
-                    map->barriers.types[((int)bombs[i].pos.x)/40][((int)bombs[i].pos.y)/40] = 0;
                     bombs[i].explosion_right = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
-                    bombs[i].explosion_left = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
-                    bombs[i].explosion_up = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
-                    bombs[i].explosion_down = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
+                    bombs[i].explosion_left  = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
+                    bombs[i].explosion_up    = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
+                    bombs[i].explosion_down  = (Rectangle){bombs[i].pos.x - STD_SIZE_DIF_X, bombs[i].pos.y - STD_SIZE_DIF_Y, STD_SIZE_X, STD_SIZE_Y};
                     bombs[i].isActiveFirstFrame = 0;
                     bombs[i].hasExploded = 1;
                 }
@@ -160,6 +172,12 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                         }
                     }
                 }
+                
+                if (bombs[i].growth_ratio * 2 > 40) {
+                    bombs[i].growth_ratio = 20;
+                } else {
+                    bombs[i].growth_ratio *= 2;
+                }
             }
             if (fabs(bombs[i].time - GetTime()) > 5){
                 bombs[i].explosion_right = (Rectangle) {-40, -40, 0, 0};
@@ -167,6 +185,7 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 bombs[i].explosion_down = (Rectangle) {-40, -40, 0, 0};
                 bombs[i].explosion_up = (Rectangle) {-40, -40, 0, 0};
                 bombs[i].isActive = 0;
+                bombs[i].hasColision = 0;
             }
         }
     }
@@ -175,18 +194,16 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
 void setBombCol(Rectangle player1, Rectangle player2, Bomb* bomb, Map* map) {
     if (!bomb->hasColision && !CheckCollisionRecs(bomb->pos, player1) && !CheckCollisionRecs(bomb->pos, player2)) {
         bomb->hasColision = 1;
-        map->barriers.barriers[((int)bomb->pos.x)/40][((int)bomb->pos.y)/40] = bomb->pos;
-        map->barriers.types[((int)bomb->pos.x)/40][((int)bomb->pos.y)/40] = 2;
     }
 }
 
 void updateBombs(Map *map, Rectangle player1, Bomb player1bombs[], int player1nb,
     Rectangle player2, Bomb player2bombs[], int player2nb) {
     if(IsKeyPressed(KEY_SPACE)) {
-        placeBomb(player1, map, player1bombs, player1nb);
+        placeBomb(player1, map, player1bombs, player1nb, player2bombs, player2nb);
     }
     if(IsKeyPressed(KEY_ENTER)) {
-        placeBomb(player2, map, player2bombs, player2nb);
+        placeBomb(player2, map, player2bombs, player2nb, player1bombs, player1nb);
     }
     colBombas(player1bombs, player1nb, player2bombs, player2nb);
     for (int i = 0; i < player1nb; i++) {

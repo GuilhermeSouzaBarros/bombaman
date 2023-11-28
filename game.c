@@ -18,10 +18,10 @@ void updateGame(Game *g) {
     updateBombs(&g->map,
         g->player1.pos, g->player1.bombs, g->player1.num_bombs, 
         g->player2.pos, g->player2.bombs, g->player2.num_bombs);
-    colBombaPlayer(g->player1.bombs, g->player1.num_bombs, &g->player1);
-    colBombaPlayer(g->player2.bombs, g->player2.num_bombs, &g->player1);
-    colBombaPlayer(g->player1.bombs, g->player1.num_bombs, &g->player2);
-    colBombaPlayer(g->player2.bombs, g->player2.num_bombs, &g->player2);
+    colExplosionPlayer(g->player1.bombs, g->player1.num_bombs, &g->player1);
+    colExplosionPlayer(g->player2.bombs, g->player2.num_bombs, &g->player1);
+    colExplosionPlayer(g->player1.bombs, g->player1.num_bombs, &g->player2);
+    colExplosionPlayer(g->player2.bombs, g->player2.num_bombs, &g->player2);
 }
 
 void DrawGame(Game *g) {
