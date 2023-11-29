@@ -12,6 +12,7 @@
 #include "maps.h"
 
 int main(void) {
+    srand(time(NULL));
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "BOMBAMAN");
     SetTargetFPS(60);
     SetExitKey(KEY_DELETE);

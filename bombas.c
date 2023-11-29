@@ -83,6 +83,19 @@ void colBombas(Bomb bombsp1[], int n, Bomb bombsp2[], int m) {
     colPlayerBombas(bombsp2, n, bombsp2, m);
 }
 
+void colDestroyable(Map *map, Rectangle explosion) {
+    for(int i = 0; i < map->num_barriers_line; i++){
+        for (int j = 0; j < map->num_barriers_coln; j++) {
+            if (map->barriers.types[i][j] == 2) {
+                if(CheckCollisionRecs(explosion, map->barriers.barriers[i][j])){
+                    printf("Reduced to atoms\n");
+                    map->barriers.types[i][j] = 0;
+                }
+            }
+        }
+    }
+}
+
 void placeBomb (Rectangle player, Map* map, Bomb bombsp1[], int n1_bombs, Bomb bombsp2[], int n2_bombs) {
     int hero_tile_x = ((int)player.x + STD_SIZE_ENT_X / 2) / 40;
     int hero_tile_y = ((int)player.y + STD_SIZE_ENT_Y / 2) / 40;
@@ -113,6 +126,7 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_right.width < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_right;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y, rectangle_bomb.width + bombs[i].growth_ratio,  rectangle_bomb.height};
+                    colDestroyable(map, verify_bomb);
                     if(!barrier_collision(map, verify_bomb)) {
                         if (verify_bomb.width < bombs[i].distance) {
                             bombs[i].explosion_right.width += bombs[i].growth_ratio;
@@ -128,6 +142,7 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_left.width < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_left;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x - bombs[i].growth_ratio, rectangle_bomb.y, rectangle_bomb.width + bombs[i].growth_ratio,  rectangle_bomb.height};
+                    colDestroyable(map, verify_bomb);
                     if(!barrier_collision(map, verify_bomb)){
                         if (verify_bomb.width < bombs[i].distance) {
                             bombs[i].explosion_left.x -= bombs[i].growth_ratio;
@@ -144,6 +159,7 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_up.height < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_up;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y - bombs[i].growth_ratio, rectangle_bomb.width,  rectangle_bomb.height + bombs[i].growth_ratio};
+                    colDestroyable(map, verify_bomb);
                     if(!barrier_collision(map, verify_bomb)){
                         if (verify_bomb.height < bombs[i].distance) {
                             bombs[i].explosion_up.y -= bombs[i].growth_ratio;
@@ -160,6 +176,7 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_down.height < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_down;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y, rectangle_bomb.width,  rectangle_bomb.height + bombs[i].growth_ratio};
+                    colDestroyable(map, verify_bomb);
                     if(!barrier_collision(map, verify_bomb)) {
                         if (verify_bomb.height < bombs[i].distance) {
                             bombs[i].explosion_down.height += bombs[i].growth_ratio;

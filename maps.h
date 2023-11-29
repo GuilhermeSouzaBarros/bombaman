@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "stdlib.h"
 
 #ifndef MAPS
 #define MAPS
@@ -16,7 +17,7 @@
 
 typedef struct Barriers {
     Rectangle barriers[15][15];
-    int types[15][15];
+    int types[15][15]; // 0: Nothing; 1: Wall; 2: Destructible
 } Barriers;
 
 typedef struct Map {

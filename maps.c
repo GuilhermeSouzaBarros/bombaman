@@ -1,10 +1,9 @@
 #include "maps.h"
-#include <stdio.h>
 
 int barrier_collision(Map *map, Rectangle target){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
-            if (map->barriers.types[i][j] == 1) {
+            if (map->barriers.types[i][j] == 1 || map->barriers.types[i][j] == 2) {
                 if(CheckCollisionRecs(target, map->barriers.barriers[i][j])){
                     return 1;
                 }
@@ -21,15 +20,29 @@ Map map0_setup(){
     for (int i = 0; i < map.num_barriers_line; i++) {
         for (int j = 0; j < map.num_barriers_coln; j++) {
             map.barriers.barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
-            if ((i == 0 || j == 0 || i == 14 || j == 14) ||
-                (i % 2 == 0 && j % 2 == 0)) {
+        }
+    }
+    for (int i = 0; i <= map.num_barriers_line; i++) {
+        for (int j = 0; i + j <= 14; j++) {
+            map.barriers.barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
+            if ((i == 0 || j == 0) || (i % 2 == 0 && j % 2 == 0)) {
                 map.barriers.types[i][j] = 1;
+                map.barriers.types[14-i][14-j] = 1;
+            } else if (i + j > 3) {
+                if ((rand() % 10) < 6) {
+                    map.barriers.types[i][j] = 2;
+                    map.barriers.types[14-i][14-j] = 2;
+                } else {
+                    map.barriers.types[i][j] = 0;
+                    map.barriers.types[14-i][14-j] = 0;
+                }
             } else {
                 map.barriers.types[i][j] = 0;
+                map.barriers.types[14-i][14-j] = 0;
             }
         }
     }
-    map.color = BLUE;
+    map.color = GRAY;
     return map;
 }
 
@@ -44,10 +57,13 @@ void draw_map(Map *map){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             if (map->barriers.types[i][j] == 1) {
-                DrawRectangleRec(map->barriers.barriers[i][j], GRAY);
+                DrawRectangleRec(map->barriers.barriers[i][j], map->color);
                 if (i != 0 && i != 14 && j != 0 && j != 14) {
                     DrawRectangleLinesEx(map->barriers.barriers[i][j], 1, BLACK);
                 }
+            }
+            if (map->barriers.types[i][j] == 2) {
+                DrawRectangleRec(map->barriers.barriers[i][j], BROWN);
             }
         }
     }
