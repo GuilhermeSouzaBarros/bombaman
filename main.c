@@ -29,8 +29,6 @@ int main(void) {
         while (game->player1.vivo && game->player2.vivo && !WindowShouldClose()) {
             gameLoop(game);
         }
-        free(game);
-
         while(!IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -43,6 +41,7 @@ int main(void) {
             }
             EndDrawing();
         }
+        free(game);
     }
     return 0;
 }
