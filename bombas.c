@@ -43,7 +43,7 @@ void initBomb(Bomb* bomb, int x, int y, Map* map) {
     bomb->isActive = 1;
     bomb->isActiveFirstFrame = 1;
     bomb->hasExploded = 0;
-    bomb->growth_ratio = 2;
+    bomb->growth_ratio = 10;
     bomb->time = GetTime();
     bomb->hasColision = 0;
     bomb->fastExplode = 0;
@@ -83,13 +83,16 @@ void colBombas(Bomb bombsp1[], int n, Bomb bombsp2[], int m) {
     colPlayerBombas(bombsp2, n, bombsp2, m);
 }
 
-void colDestroyable(Map *map, Rectangle explosion) {
+void colDestroyable(Map *map, Rectangle explosion, Pickup** pickups, int* n_pickups) {
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             if (map->barriers.types[i][j] == 2) {
                 if(CheckCollisionRecs(explosion, map->barriers.barriers[i][j])){
-                    printf("Reduced to atoms\n");
                     map->barriers.types[i][j] = 0;
+                    if (*n_pickups < 10) {
+                        pickups[*n_pickups] = initPickup(i*40, j*40);
+                        *n_pickups += 1;
+                    }
                 }
             }
         }
@@ -109,7 +112,7 @@ void placeBomb (Rectangle player, Map* map, Bomb bombsp1[], int n1_bombs, Bomb b
     }
 }
 
-void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
+void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n, Pickup** pickups, int* n_pickups){
     for(int i = 0; i < n; i++){
         if(bombs[i].isActive){
             if ((fabs(bombs[i].time - GetTime()) > 3 && fabs(bombs[i].time - GetTime()) < 5) || bombs[i].fastExplode){
@@ -126,7 +129,9 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_right.width < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_right;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y, rectangle_bomb.width + bombs[i].growth_ratio,  rectangle_bomb.height};
-                    colDestroyable(map, verify_bomb);
+                    if (verify_bomb.width < bombs[i].distance) {
+                        colDestroyable(map, verify_bomb, pickups, n_pickups);
+                    }
                     if(!barrier_collision(map, verify_bomb)) {
                         if (verify_bomb.width < bombs[i].distance) {
                             bombs[i].explosion_right.width += bombs[i].growth_ratio;
@@ -142,7 +147,9 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_left.width < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_left;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x - bombs[i].growth_ratio, rectangle_bomb.y, rectangle_bomb.width + bombs[i].growth_ratio,  rectangle_bomb.height};
-                    colDestroyable(map, verify_bomb);
+                    if (verify_bomb.width < bombs[i].distance) {
+                        colDestroyable(map, verify_bomb, pickups, n_pickups);
+                    }
                     if(!barrier_collision(map, verify_bomb)){
                         if (verify_bomb.width < bombs[i].distance) {
                             bombs[i].explosion_left.x -= bombs[i].growth_ratio;
@@ -159,7 +166,9 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_up.height < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_up;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y - bombs[i].growth_ratio, rectangle_bomb.width,  rectangle_bomb.height + bombs[i].growth_ratio};
-                    colDestroyable(map, verify_bomb);
+                    if (verify_bomb.height < bombs[i].distance) {
+                        colDestroyable(map, verify_bomb, pickups, n_pickups);
+                    }
                     if(!barrier_collision(map, verify_bomb)){
                         if (verify_bomb.height < bombs[i].distance) {
                             bombs[i].explosion_up.y -= bombs[i].growth_ratio;
@@ -176,7 +185,9 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                 if (bombs[i].explosion_down.height < bombs[i].distance) {
                     rectangle_bomb = bombs[i].explosion_down;
                     Rectangle verify_bomb = (Rectangle){ rectangle_bomb.x, rectangle_bomb.y, rectangle_bomb.width,  rectangle_bomb.height + bombs[i].growth_ratio};
-                    colDestroyable(map, verify_bomb);
+                    if (verify_bomb.height < bombs[i].distance) {
+                        colDestroyable(map, verify_bomb, pickups, n_pickups);
+                    }
                     if(!barrier_collision(map, verify_bomb)) {
                         if (verify_bomb.height < bombs[i].distance) {
                             bombs[i].explosion_down.height += bombs[i].growth_ratio;
@@ -188,12 +199,6 @@ void explodeBombs(Map *map, Rectangle player, Bomb bombs[], int n){
                             bombs[i].explosion_down.height += 40 - (int)bombs[i].explosion_down.height % 40;
                         }
                     }
-                }
-                
-                if (bombs[i].growth_ratio * 2 > 40) {
-                    bombs[i].growth_ratio = 20;
-                } else {
-                    bombs[i].growth_ratio *= 2;
                 }
             }
             if (fabs(bombs[i].time - GetTime()) > 5){
@@ -214,7 +219,8 @@ void setBombCol(Rectangle player1, Rectangle player2, Bomb* bomb, Map* map) {
     }
 }
 
-void updateBombs(Map *map, Rectangle player1, Bomb player1bombs[], int player1nb,
+void updateBombs(Map *map, Pickup* pickups[],  int* n_pickups,
+    Rectangle player1, Bomb player1bombs[], int player1nb,
     Rectangle player2, Bomb player2bombs[], int player2nb) {
     if(IsKeyPressed(KEY_SPACE)) {
         placeBomb(player1, map, player1bombs, player1nb, player2bombs, player2nb);
@@ -233,6 +239,6 @@ void updateBombs(Map *map, Rectangle player1, Bomb player1bombs[], int player1nb
             setBombCol(player1, player2, &player2bombs[i], map);
         }
     }
-    explodeBombs(map, player1, player1bombs, player1nb);
-    explodeBombs(map, player2, player2bombs, player2nb);
+    explodeBombs(map, player1, player1bombs, player1nb, pickups, n_pickups);
+    explodeBombs(map, player2, player2bombs, player2nb, pickups, n_pickups);
 }

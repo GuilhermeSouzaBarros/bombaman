@@ -1,6 +1,7 @@
 #include "player.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
@@ -8,7 +9,7 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     player->color = color;
     strcpy(player->nome, nome);
     player->speed = 4;
-    player->num_bombs = 5;
+    player->num_bombs = 1;
     for (int i = 0; i < 5; i++) {
         player->bombs[i].isActive = 0;
         player->bombs[i].distance = 80;
@@ -56,51 +57,45 @@ void colExplosionPlayer(Bomb bombs[], int n, Player *player) {
     }
 }
 
-void updateMovement(Player* player, Map* m, int vel_x, int vel_y, Bomb bombs_p1[], int p1, Bomb bombs_p2[], int p2) {
-    do {
-        int col=0;
-        player->pos.x += vel_x;
-        for (int i = 0; i < m->num_barriers_line; i++) {
-            for (int j = 0; j < m->num_barriers_coln; j++) {
-                if (barrier_collision(m, player->pos) || colBombaPlayer(player->pos, bombs_p1, p1) ||
-                    colBombaPlayer(player->pos, bombs_p2, p2)) {
-                    player->pos.x -= vel_x;
-                    if (vel_x > 0) { 
-                        vel_x--;
-                    } else {
-                        vel_x++;
+void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups) {
+    for (int i = 0; i < *n_pickups; i++) {
+        if (CheckCollisionRecs(player->pos, pickups[i]->pos)) {
+            switch (pickups[i]->type) {
+                case 0:
+                    player->speed++;
+                    break;
+                case 1:
+                    player->num_bombs++;
+                    break;
+                case 2:
+                    for (int j = 0; j < 5; j++) {
+                        player->bombs[i].distance += 40;
                     }
-                    col = 1;
                     break;
-                }
             }
+            free(pickups[i]);
+            if (i != *n_pickups-1) {
+                pickups[i] = pickups[*n_pickups-1]; 
+            }
+            *n_pickups--;
         }
-        if (col) {
-            col = 0;
-            continue;
-        }
-        vel_x = 0;
-    } while (vel_x);
-    do {
+    }
+}
+
+void updateMovement(Rectangle* player, float* cord, int speed,
+    Map* m, Bomb bombs_p1[], int p1, Bomb bombs_p2[], int p2) {
+    while (speed) {
         int col=0;
-        player->pos.y += vel_y;
-        for (int i = 0; i < m->num_barriers_line; i++) {
-            for (int j = 0; j < m->num_barriers_coln; j++) {
-                if (barrier_collision(m, player->pos) || colBombaPlayer(player->pos, bombs_p1, p1) ||
-                    colBombaPlayer(player->pos, bombs_p2, p2)) {
-                    player->pos.y -= vel_y;
-                    if (vel_y > 0) vel_y--; else vel_y++;
-                    col = 1;
-                    break;
-                }
-            }
+        *cord += speed;
+        if (barrier_collision(m, *player) || colBombaPlayer(*player, bombs_p1, p1) ||
+            colBombaPlayer(*player, bombs_p2, p2)) {
+            *cord -= speed;
+        } else {
+            break;
         }
-        if (col) {
-            col = 0;
-            continue;
-        }
-        vel_y = 0;
-    } while (vel_y);
+        if (speed > 0) speed--;
+        else speed++;
+    }
 }
 
 void updatePlayersPos(Player *p1, Player *p2, Map *m){
@@ -109,12 +104,14 @@ void updatePlayersPos(Player *p1, Player *p2, Map *m){
     if (IsKeyDown(KEY_A)) vel1_x -= p1->speed;
     if (IsKeyDown(KEY_S)) vel1_y += p1->speed;
     if (IsKeyDown(KEY_D)) vel1_x += p1->speed;
-    updateMovement(p1, m, vel1_x, vel1_y, p1->bombs, p1->num_bombs, p2->bombs, p2->num_bombs);
+    updateMovement(&p1->pos, &p1->pos.x, vel1_x, m, p1->bombs, p1->num_bombs, p2->bombs, p2->num_bombs);
+    updateMovement(&p1->pos, &p1->pos.y, vel1_y, m, p1->bombs, p1->num_bombs, p2->bombs, p2->num_bombs);
 
     int vel2_x = 0, vel2_y = 0;
     if (IsKeyDown(KEY_I)) vel2_y -= p2->speed;
     if (IsKeyDown(KEY_J)) vel2_x -= p2->speed;
     if (IsKeyDown(KEY_K)) vel2_y += p2->speed;
     if (IsKeyDown(KEY_L)) vel2_x += p2->speed;
-    updateMovement(p2, m, vel2_x, vel2_y, p2->bombs, p2->num_bombs, p1->bombs, p1->num_bombs);
+    updateMovement(&p2->pos, &p2->pos.x, vel2_x, m, p2->bombs, p2->num_bombs, p1->bombs, p1->num_bombs);
+    updateMovement(&p2->pos, &p2->pos.y, vel2_y, m, p2->bombs, p2->num_bombs, p1->bombs, p1->num_bombs);
 }

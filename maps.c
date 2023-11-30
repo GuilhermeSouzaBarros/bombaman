@@ -54,6 +54,7 @@ Map mapSetup(int num_map) {
 }
 
 void draw_map(Map *map){
+
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             if (map->barriers.types[i][j] == 1) {

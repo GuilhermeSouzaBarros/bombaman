@@ -17,6 +17,7 @@ typedef struct Player {
 
 void initPlayer(Player* player, char* nome, Color color, Rectangle pos);
 void colExplosionPlayer(Bomb bombs[], int n, Player *player);
+void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups);
 void updatePlayersPos(Player* p1, Player* p2, Map *m);
 
 #endif

@@ -4,7 +4,6 @@
 #ifndef MAPS
 #define MAPS
 
-
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define STD_SIZE_X 40
