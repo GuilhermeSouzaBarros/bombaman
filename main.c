@@ -29,6 +29,7 @@ int main(void) {
         while (game->player1.vivo && game->player2.vivo && !WindowShouldClose()) {
             gameLoop(game);
         }
+        FILE* placar = fopen("placar.txt", "a");
         while(!IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -41,7 +42,17 @@ int main(void) {
             }
             EndDrawing();
         }
-        free(game);
+        if (!WindowShouldClose()) {
+            if(game->player1.vivo) {
+                fputs("Player 1 ganhou\n", placar);
+            } else if (game->player2.vivo) {
+                fputs("Player 2 ganhou\n", placar);
+            } else {
+                fputs("Empatou\n", placar);
+            }
+            fclose(placar);
+            free(game);
+        }
     }
     return 0;
 }

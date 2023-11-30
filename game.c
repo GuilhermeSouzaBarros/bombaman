@@ -17,7 +17,7 @@ Game* initGame(Map map, char* p1_nome, char* p2_nome){
 }
 
 int timesUp(double time) {
-    if (GetTime() - time > 5) {
+    if (GetTime() - time > 120) {
         return 1;
     } else {
         return 0;
