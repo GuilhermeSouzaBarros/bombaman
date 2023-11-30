@@ -3,6 +3,7 @@
 #include "maps.h"
 
 #include "raylib.h"
+#include "stdio.h"
 #include "stdlib.h"
 
 Game* initGame(Map map, char* p1_nome, char* p2_nome){

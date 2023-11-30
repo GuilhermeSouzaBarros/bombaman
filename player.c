@@ -69,15 +69,15 @@ void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups) {
                     break;
                 case 2:
                     for (int j = 0; j < 5; j++) {
-                        player->bombs[i].distance += 40;
+                        player->bombs[j].distance += 40;
                     }
+                    break;
+                default:
                     break;
             }
             free(pickups[i]);
-            if (i != *n_pickups-1) {
-                pickups[i] = pickups[*n_pickups-1]; 
-            }
-            *n_pickups--;
+            pickups[i] = pickups[*n_pickups - 1]; 
+            *n_pickups -= 1;
         }
     }
 }
