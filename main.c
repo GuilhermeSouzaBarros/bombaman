@@ -5,6 +5,7 @@
 #include <math.h>
 #include <unistd.h>
 
+#include "structs.h"
 #include "menu.h"
 #include "game.h"
 #include "player.h"
@@ -26,16 +27,16 @@ int main(void) {
         Game* game = initGame(mapSetup(0), menu->p1_nome, menu->p2_nome);
         free(menu);
 
-        while (game->player1.vivo && game->player2.vivo && !WindowShouldClose()) {
+        while (game->players[0].vivo && game->players[1].vivo && !WindowShouldClose()) {
             gameLoop(game);
         }
         FILE* placar = fopen("placar.txt", "a");
         while(!IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(RAYWHITE);
-            if(game->player1.vivo) {
+            if(game->players[0].vivo) {
                 DrawText("GANHASTE JOGADOR 1", GetScreenWidth()/2 - MeasureText("GANHASTE JOGADOR 1", 20)/2, GetScreenHeight()/2 - 50, 20, BLACK);
-            } else if (game->player2.vivo) {
+            } else if (game->players[1].vivo) {
                 DrawText("GANHASTE JOGADOR 2", GetScreenWidth()/2 - MeasureText("GANHASTE JOGADOR 2", 20)/2, GetScreenHeight()/2 - 50, 20, BLACK);
             } else {
                 DrawText("EMPATASTES", GetScreenWidth()/2 - MeasureText("EMPATASTES", 20)/2, GetScreenHeight()/2 - 50, 20, BLACK);
@@ -43,16 +44,16 @@ int main(void) {
             EndDrawing();
         }
         if (!WindowShouldClose()) {
-            if(game->player1.vivo) {
+            if(game->players[0].vivo) {
                 fputs("Player 1 ganhou\n", placar);
-            } else if (game->player2.vivo) {
+            } else if (game->players[1].vivo) {
                 fputs("Player 2 ganhou\n", placar);
             } else {
                 fputs("Empatou\n", placar);
             }
-            fclose(placar);
-            free(game);
         }
+        fclose(placar);
+        free(game);
     }
     return 0;
 }

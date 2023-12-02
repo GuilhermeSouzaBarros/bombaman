@@ -9,69 +9,62 @@
 Game* initGame(Map map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
     g->map = map;
-    initPlayer(&g->player1, p1_nome, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
-    initPlayer(&g->player2, p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT_X, STD_SIZE_ENT_Y});
+    initPlayer(&g->players[0], p1_nome, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT, STD_SIZE_ENT});
+    initPlayer(&g->players[1], p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT, STD_SIZE_ENT});
     g->n_pickups = 0;
-    g->time = GetTime();
+    g->start_time = GetTime();
+    g->time = g->start_time - GetTime();
     return g;
 }
 
-int timesUp(double time) {
-    if (GetTime() - time > 120) {
-        return 1;
+void updateGame(Game* game) {
+    game->time = GetTime() - game->start_time;
+    if (game->time < 120) {
+        updatePlayersPos(game);
     } else {
-        return 0;
-    }
-}
-
-void updateGame(Game *g) {
-    if (!timesUp(g->time)) {
-        updatePlayersPos(&g->player1, &g->player2, &g->map);
-    } else {
-        for (int i = 0; i < g->player1.num_bombs; i++) {
-            g->player1.bombs[i].fastExplode = 1;
-        }
-        for (int i = 0; i < g->player2.num_bombs; i++) {
-            g->player2.bombs[i].fastExplode = 1;
+        for (int i = 0; i < 5; i++) {
+            game->players[0].bombs[i].fastExplode = 1;
+            game->players[1].bombs[i].fastExplode = 1;
         }
         int cabou = 1;
         for (int i = 0; i < 5; i ++) {
-            if (g->player1.bombs[i].isActive || g->player2.bombs[i].isActive) {
+            if (game->players[0].bombs[i].isActive || game->players[1].bombs[i].isActive) {
                 cabou = 0;
             }
         }
         if (cabou) {
-            g->player1.vivo = 0;
-            g->player2.vivo = 0;
+            game->players[0].vivo = 0;
+            game->players[1].vivo = 0;
         }
     }
-    colPlayerPickups(&g->player1, g->pickups, &g->n_pickups);
-    colPlayerPickups(&g->player2, g->pickups, &g->n_pickups);
-    updateBombs(&g->map, g->pickups, &g->n_pickups,
-        g->player1.pos, g->player1.bombs, g->player1.num_bombs, 
-        g->player2.pos, g->player2.bombs, g->player2.num_bombs);
-    colExplosionPlayer(g->player1.bombs, g->player1.num_bombs, &g->player1);
-    colExplosionPlayer(g->player2.bombs, g->player2.num_bombs, &g->player1);
-    colExplosionPlayer(g->player1.bombs, g->player1.num_bombs, &g->player2);
-    colExplosionPlayer(g->player2.bombs, g->player2.num_bombs, &g->player2);
+    colPlayerPickups(&game->players[0], game->pickups, &game->n_pickups);
+    colPlayerPickups(&game->players[1], game->pickups, &game->n_pickups);
+    updateBombs(game);
+    if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[0].pos) ||
+        colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[0].pos)) {
+        game->players[0].vivo = 0;
+    }
+    if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[1].pos) ||
+        colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[1].pos)) {
+        game->players[1].vivo = 0;
+    }
 }
 
 void DrawGame(Game *g) {
     BeginDrawing();
     ClearBackground(DARKGRAY);
     draw_map(&g->map);
-    draw_bomb(g->player1.bombs, g->player1.num_bombs);
-    draw_bomb(g->player2.bombs, g->player2.num_bombs);
+    draw_bomb(g->players[0].bombs, g->players[0].num_bombs);
+    draw_bomb(g->players[1].bombs, g->players[1].num_bombs);
     drawPickup(g->pickups, g->n_pickups);
-    DrawRectangleRec(g->player1.pos, g->player1.color);
-    DrawRectangleRec(g->player2.pos, g->player2.color);
+    DrawRectangleRec(g->players[0].pos, g->players[0].color);
+    DrawRectangleRec(g->players[1].pos, g->players[1].color);
 
-    DrawText(g->player1.nome, 630, 5, 30, g->player1.color);
-    DrawText(g->player2.nome, 630, 40, 30, g->player2.color);
+    DrawText(g->players[0].nome, 630, 5, 30, g->players[0].color);
+    DrawText(g->players[1].nome, 630, 40, 30, g->players[1].color);
 
-    if (!timesUp(g->time)) {
-        double time = GetTime();
-        DrawText(TextFormat("%02d:%02d:%02d\n", 1 - (int)(time/60), 60 - (int)time, 100 - (int)(time * 100) % 100),
+    if (g->time < 120) {
+        DrawText(TextFormat("%02d:%02d:%02d\n", 1 - (int)(g->time/60), 60 - (int)g->time, 100 - (int)(g->time * 100) % 100),
             630, 100, 40, BLACK);
     } else {
         DrawText("TIMES UP!", 610, 100, 34, BLACK);

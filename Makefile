@@ -1,5 +1,5 @@
-bomba: main.o game.o player.o bombas.o maps.o menu.o pickup.o
-	gcc game.o main.o player.o bombas.o maps.o menu.o pickup.o -o bomba -lraylib -lm 
+bomba: main.o game.o player.o bombas.o maps.o menu.o pickup.o structs.o
+	gcc game.o main.o player.o bombas.o maps.o menu.o pickup.o structs.o -o bomba -lraylib -lm 
 
 main.o: main.c
 	gcc -g -c main.c
@@ -21,3 +21,6 @@ menu.o: menu.c menu.h
 
 pickup.o: pickup.c pickup.h
 	gcc -g -c pickup.c
+
+structs.o: structs.c structs.h
+	gcc -g -c structs.c

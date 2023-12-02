@@ -2,7 +2,7 @@
 
 Pickup* initPickup(int x, int y) {
     Pickup* p = (Pickup*)malloc(sizeof(Pickup));
-    p->pos = (Rectangle){x + 4, y + 4, STD_SIZE_ENT_X, STD_SIZE_ENT_Y};
+    p->pos = (Rectangle){x + 4, y + 4, STD_SIZE_ENT, STD_SIZE_ENT};
     p->type = rand() % 3;
     switch (p->type) {
         case 0:

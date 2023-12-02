@@ -1,6 +1,6 @@
 #include "maps.h"
 
-int barrier_collision(Map *map, Rectangle target){
+int colBarrier(Map *map, Rectangle target){
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             if (map->barriers.types[i][j] == 1 || map->barriers.types[i][j] == 2) {

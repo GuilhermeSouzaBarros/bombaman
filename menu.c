@@ -1,3 +1,4 @@
+#include "structs.h"
 #include "menu.h"
 #include "maps.h"
 

@@ -10,13 +10,13 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     strcpy(player->nome, nome);
     player->speed = 4;
     player->num_bombs = 1;
+    player->bomb_distance = 1;
     for (int i = 0; i < 5; i++) {
         player->bombs[i].isActive = 0;
-        player->bombs[i].distance = 80;
-        player->bombs[i].explosion_up    = (Rectangle){-40, -40, 0, 0};
-        player->bombs[i].explosion_left  = (Rectangle){-40, -40, 0, 0};
-        player->bombs[i].explosion_down  = (Rectangle){-40, -40, 0, 0};
-        player->bombs[i].explosion_right = (Rectangle){-40, -40, 0, 0};
+        player->bombs[i].pos = (Rectangle){0, 0, 0, 0};
+        for (int j = 0; j < 4; j++) {
+            player->bombs[i].explosions[j] = (Rectangle){0, 0, 0, 0};
+        }
     }
     player->vivo = 1;
 }
@@ -32,47 +32,24 @@ int colBombaPlayer(Rectangle player, Bomb bombs[], int n_bombs) {
     return 0;
 }
 
-void colExplosionPlayer(Bomb bombs[], int n, Player *player) {
-    for (int i = 0; i < n; i++) {
-        if (CheckCollisionRecs(player->pos, bombs[i].explosion_down) &&
-                bombs[i].hasExploded) {
-            player->vivo = 0;
-            break;
-        }
-        if (CheckCollisionRecs(player->pos, bombs[i].explosion_up) &&
-                bombs[i].hasExploded) {
-            player->vivo = 0;
-            break;
-        }
-        if (CheckCollisionRecs(player->pos, bombs[i].explosion_left) &&
-                bombs[i].hasExploded) {
-            player->vivo = 0;
-            break;
-        }
-        if (CheckCollisionRecs(player->pos, bombs[i].explosion_right) &&
-                bombs[i].hasExploded) {
-            player->vivo = 0;
-            break;
-        }
-    }
-}
-
 void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups) {
     for (int i = 0; i < *n_pickups; i++) {
         if (CheckCollisionRecs(player->pos, pickups[i]->pos)) {
             switch (pickups[i]->type) {
                 case 0:
-                    player->speed++;
-                    break;
-                case 1:
-                    player->num_bombs++;
-                    break;
-                case 2:
-                    for (int j = 0; j < 5; j++) {
-                        player->bombs[j].distance += 40;
+                    if (player->speed < 6) {
+                        player->speed++;
                     }
                     break;
-                default:
+                case 1:
+                    if (player->num_bombs < 5) {
+                        player->num_bombs++;
+                    }
+                    break;
+                case 2:
+                    if (player->bomb_distance < 5) {
+                        player->bomb_distance++;
+                    }
                     break;
             }
             free(pickups[i]);
@@ -82,13 +59,13 @@ void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups) {
     }
 }
 
-void updateMovement(Rectangle* player, float* cord, int speed,
-    Map* m, Bomb bombs_p1[], int p1, Bomb bombs_p2[], int p2) {
+void updateMovement(Game* game, Player* player, float* cord, int speed) {
     while (speed) {
         int col=0;
         *cord += speed;
-        if (barrier_collision(m, *player) || colBombaPlayer(*player, bombs_p1, p1) ||
-            colBombaPlayer(*player, bombs_p2, p2)) {
+        if (colBarrier(&game->map, player->pos) ||
+            colBombaPlayer(player->pos, game->players[0].bombs, game->players[0].num_bombs) ||
+            colBombaPlayer(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
             *cord -= speed;
         } else {
             break;
@@ -98,20 +75,20 @@ void updateMovement(Rectangle* player, float* cord, int speed,
     }
 }
 
-void updatePlayersPos(Player *p1, Player *p2, Map *m){
-    int vel1_x = 0, vel1_y = 0;
-    if (IsKeyDown(KEY_W)) vel1_y -= p1->speed;
-    if (IsKeyDown(KEY_A)) vel1_x -= p1->speed;
-    if (IsKeyDown(KEY_S)) vel1_y += p1->speed;
-    if (IsKeyDown(KEY_D)) vel1_x += p1->speed;
-    updateMovement(&p1->pos, &p1->pos.x, vel1_x, m, p1->bombs, p1->num_bombs, p2->bombs, p2->num_bombs);
-    updateMovement(&p1->pos, &p1->pos.y, vel1_y, m, p1->bombs, p1->num_bombs, p2->bombs, p2->num_bombs);
+void updatePlayersPos(Game* game){
+    int vel_x = 0, vel_y = 0;
+    if (IsKeyDown(KEY_W)) vel_y -= game->players[0].speed;
+    if (IsKeyDown(KEY_A)) vel_x -= game->players[0].speed;
+    if (IsKeyDown(KEY_S)) vel_y += game->players[0].speed;
+    if (IsKeyDown(KEY_D)) vel_x += game->players[0].speed;
+    updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
+    updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
 
-    int vel2_x = 0, vel2_y = 0;
-    if (IsKeyDown(KEY_I)) vel2_y -= p2->speed;
-    if (IsKeyDown(KEY_J)) vel2_x -= p2->speed;
-    if (IsKeyDown(KEY_K)) vel2_y += p2->speed;
-    if (IsKeyDown(KEY_L)) vel2_x += p2->speed;
-    updateMovement(&p2->pos, &p2->pos.x, vel2_x, m, p2->bombs, p2->num_bombs, p1->bombs, p1->num_bombs);
-    updateMovement(&p2->pos, &p2->pos.y, vel2_y, m, p2->bombs, p2->num_bombs, p1->bombs, p1->num_bombs);
+    vel_x = 0, vel_y = 0;
+    if (IsKeyDown(KEY_I)) vel_y -= game->players[1].speed;
+    if (IsKeyDown(KEY_J)) vel_x -= game->players[1].speed;
+    if (IsKeyDown(KEY_K)) vel_y += game->players[1].speed;
+    if (IsKeyDown(KEY_L)) vel_x += game->players[1].speed;
+    updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
+    updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
 }
