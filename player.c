@@ -21,51 +21,13 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     player->vivo = 1;
 }
 
-int colBombaPlayer(Rectangle player, Bomb bombs[], int n_bombs) {
-    for (int i = 0; i < n_bombs; i++) {
-        if (bombs[i].hasColision) {
-            if (CheckCollisionRecs(bombs[i].pos, player)) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
-void colPlayerPickups(Player* player, Pickup** pickups, int* n_pickups) {
-    for (int i = 0; i < *n_pickups; i++) {
-        if (CheckCollisionRecs(player->pos, pickups[i]->pos)) {
-            switch (pickups[i]->type) {
-                case 0:
-                    if (player->speed < 6) {
-                        player->speed++;
-                    }
-                    break;
-                case 1:
-                    if (player->num_bombs < 5) {
-                        player->num_bombs++;
-                    }
-                    break;
-                case 2:
-                    if (player->bomb_distance < 5) {
-                        player->bomb_distance++;
-                    }
-                    break;
-            }
-            free(pickups[i]);
-            pickups[i] = pickups[*n_pickups - 1]; 
-            *n_pickups -= 1;
-        }
-    }
-}
-
 void updateMovement(Game* game, Player* player, float* cord, int speed) {
     while (speed) {
         int col=0;
         *cord += speed;
         if (colBarrier(&game->map, player->pos) ||
-            colBombaPlayer(player->pos, game->players[0].bombs, game->players[0].num_bombs) ||
-            colBombaPlayer(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
+            colBombasRec(player->pos, game->players[0].bombs, game->players[0].num_bombs) ||
+            colBombasRec(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
             *cord -= speed;
         } else {
             break;

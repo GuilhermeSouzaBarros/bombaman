@@ -37,8 +37,8 @@ void updateGame(Game* game) {
             game->players[1].vivo = 0;
         }
     }
-    colPlayerPickups(&game->players[0], game->pickups, &game->n_pickups);
-    colPlayerPickups(&game->players[1], game->pickups, &game->n_pickups);
+    colPlayerPickups(game, &game->players[0]);
+    colPlayerPickups(game, &game->players[1]);
     updateBombs(game);
     if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[0].pos) ||
         colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[0].pos)) {

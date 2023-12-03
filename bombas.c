@@ -85,14 +85,16 @@ int colPerBombaExplosion(Bomb* bomb, Game* game) {
 void colBombas(Game* game) {
     Bomb* bomb;
     for (int i = 0; i < game->players[0].num_bombs; i++) {
-        if (game->players[0].bombs[i].isActive) {
+        if (game->players[0].bombs[i].isActive && !game->players[0].bombs[i].hasExploded) {
             bomb = &game->players[0].bombs[i];
             if (colPerBombaExplosion(bomb, game)) {
                 bomb->fastExplode = 1;
                 break;
             }
         }
-        if (game->players[1].bombs[i].isActive) {
+    }
+    for (int i = 0; i < game->players[1].num_bombs; i++) {
+        if (game->players[1].bombs[i].isActive && !game->players[1].bombs[i].hasExploded) {
             bomb = &game->players[1].bombs[i];
             if (colPerBombaExplosion(bomb, game)) {
                 bomb->fastExplode = 1;
@@ -100,6 +102,17 @@ void colBombas(Game* game) {
             }
         }
     }
+}
+
+int colBombasRec(Rectangle target, Bomb bombs[], int n_bombs) {
+    for (int i = 0; i < n_bombs; i++) {
+        if (bombs[i].hasColision) {
+            if (CheckCollisionRecs(bombs[i].pos, target)) {
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 void colDestroyable(Game* game, Rectangle explosion) {
