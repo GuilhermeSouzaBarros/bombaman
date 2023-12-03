@@ -7,7 +7,7 @@
 void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     player->pos = pos;
     player->color = color;
-    strcpy(player->nome, nome);
+    player->nome = nome;
     player->speed = 4;
     player->num_bombs = 1;
     player->bomb_distance = 1;

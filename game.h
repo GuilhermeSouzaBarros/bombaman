@@ -8,8 +8,7 @@
 #define GAME
 
 Game* initGame(Map map, char* p1_nome, char* p2_nome);
-void updateGame(Game *g);
-void DrawGame(Game *g);
-void gameLoop(Game *g);
+void freeGame(Game* game);
+void gameLoop(Game *g, Placar* placar);
 
 #endif

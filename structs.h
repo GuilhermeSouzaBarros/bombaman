@@ -36,7 +36,7 @@ typedef struct Bomb{
 typedef struct Player {
     Rectangle pos;
     Color color;
-    char nome[10];
+    char* nome;
     int speed;
     Bomb bombs[5];
     int bomb_distance;
@@ -52,5 +52,34 @@ typedef struct Game {
     double time;
     double start_time;
 } Game;
+
+typedef struct Menu {
+    int screen;
+    int game_start;
+    int text_input_1;
+    int text_input_2;
+    char* p1_nome;
+    int p1_qletras;
+    char* p2_nome;
+    int p2_qletras;
+} Menu;
+
+typedef struct EndMenu {
+    char p1_nome[10];
+    char p2_nome[10];
+    int winner; // | 0: Draw |
+    Color winner_color;
+    int exit;
+    Map map;
+} EndMenu;
+
+typedef struct Placar {
+    int p1_wins;
+    int p2_wins;
+    int draws;
+    char p1_nome[10];
+    char p2_nome[10];
+    int rematch;
+} Placar;
 
 #endif

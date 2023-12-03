@@ -17,6 +17,13 @@ Game* initGame(Map map, char* p1_nome, char* p2_nome){
     return g;
 }
 
+void freeGame(Game* game) {
+    for (int i = 0; i < game->n_pickups; i++) {
+        free(game->pickups[i]);
+    }
+    free(game);
+}
+
 void updateGame(Game* game) {
     game->time = GetTime() - game->start_time;
     if (game->time < 120) {
@@ -50,7 +57,7 @@ void updateGame(Game* game) {
     }
 }
 
-void DrawGame(Game *g) {
+void DrawGame(Game *g, Placar* placar) {
     BeginDrawing();
     ClearBackground(DARKGRAY);
     draw_map(&g->map);
@@ -73,7 +80,7 @@ void DrawGame(Game *g) {
     EndDrawing();
 }
 
-void gameLoop(Game* game) {
+void gameLoop(Game* game, Placar* placar) {
     updateGame(game);
-    DrawGame(game);
+    DrawGame(game, placar);
 }
