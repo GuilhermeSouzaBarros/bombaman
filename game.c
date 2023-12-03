@@ -6,22 +6,15 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-Game* initGame(Map map, char* p1_nome, char* p2_nome){
+Game* initGame(int map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
-    g->map = map;
     initPlayer(&g->players[0], p1_nome, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT, STD_SIZE_ENT});
     initPlayer(&g->players[1], p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT, STD_SIZE_ENT});
-    g->n_pickups = 0;
+    g->total_pickups = 0;
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
+    mapSetup(g, map);
     return g;
-}
-
-void freeGame(Game* game) {
-    for (int i = 0; i < game->n_pickups; i++) {
-        free(game->pickups[i]);
-    }
-    free(game);
 }
 
 void updateGame(Game* game) {
@@ -60,10 +53,14 @@ void updateGame(Game* game) {
 void DrawGame(Game *g, Placar* placar) {
     BeginDrawing();
     ClearBackground(DARKGRAY);
+
     draw_map(&g->map);
+    
+    drawPickup(g->pickups, g->total_pickups);
+
     draw_bomb(g->players[0].bombs, g->players[0].num_bombs);
     draw_bomb(g->players[1].bombs, g->players[1].num_bombs);
-    drawPickup(g->pickups, g->n_pickups);
+
     DrawRectangleRec(g->players[0].pos, g->players[0].color);
     DrawRectangleRec(g->players[1].pos, g->players[1].color);
 
@@ -71,7 +68,10 @@ void DrawGame(Game *g, Placar* placar) {
     DrawText(g->players[1].nome, 630, 40, 30, g->players[1].color);
 
     if (g->time < 120) {
-        DrawText(TextFormat("%02d:%02d:%02d\n", 1 - (int)(g->time/60), 60 - (int)g->time, 100 - (int)(g->time * 100) % 100),
+        DrawText(
+            TextFormat("%02d:%02d:%02d\n", 1 - (int)(g->time/60),
+                                          60 - (int) g->time,
+                                         100 - (int)(g->time * 100) % 100),
             630, 100, 40, BLACK);
     } else {
         DrawText("TIMES UP!", 610, 100, 34, BLACK);

@@ -5,7 +5,7 @@
 
 typedef struct Barriers {
     Rectangle barriers[15][15];
-    int types[15][15]; // 0: Nothing; 1: Wall; 2: Destructible
+    int types[15][15]; //| 0: Nothing | 1: Wall | 2: Destructible | 3: Pickup |
 } Barriers;
 
 typedef struct Map {
@@ -17,8 +17,10 @@ typedef struct Map {
 
 typedef struct Pickup {
     Rectangle pos;
+    int tile_x;
+    int tile_y;
     Color color;
-    int type;
+    int type; //| 0: Speed | 1: Num_bombs | 2: Range |
 } Pickup;
 
 typedef struct Bomb{
@@ -47,8 +49,8 @@ typedef struct Player {
 typedef struct Game {
     Map map;
     Player players[2];
-    Pickup* pickups[10];
-    int n_pickups;
+    Pickup pickups[10];
+    int total_pickups;
     double time;
     double start_time;
 } Game;

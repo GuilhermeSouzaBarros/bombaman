@@ -118,13 +118,9 @@ int colBombasRec(Rectangle target, Bomb bombs[], int n_bombs) {
 void colDestroyable(Game* game, Rectangle explosion) {
     for(int i = 0; i < game->map.num_barriers_line; i++){
         for (int j = 0; j < game->map.num_barriers_coln; j++) {
-            if (game->map.barriers.types[i][j] == 2) {
+            if (game->map.barriers.types[i][j] == 2 || game->map.barriers.types[i][j] == 3) {
                 if(CheckCollisionRecs(explosion, game->map.barriers.barriers[i][j])){
                     game->map.barriers.types[i][j] = 0;
-                    if (game->n_pickups < 10) {
-                        game->pickups[game->n_pickups] = initPickup(i*40, j*40);
-                        game->n_pickups += 1;
-                    }
                 }
             }
         }

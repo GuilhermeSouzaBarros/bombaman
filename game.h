@@ -7,8 +7,7 @@
 #ifndef GAME
 #define GAME
 
-Game* initGame(Map map, char* p1_nome, char* p2_nome);
-void freeGame(Game* game);
+Game* initGame(int map, char* p1_nome, char* p2_nome);
 void gameLoop(Game *g, Placar* placar);
 
 #endif

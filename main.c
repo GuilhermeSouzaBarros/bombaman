@@ -20,12 +20,11 @@ int main(void) {
     Placar placar = {0, 0, 0, 0, 0, 0};
     while(!WindowShouldClose()) {
         Menu* menu = initMenu(&placar);
-
         while (!placar.rematch && !menu->game_start && !WindowShouldClose()) {
             menuLoop(menu, &placar);
         }
         
-        Game* game = initGame(mapSetup(0), menu->p1_nome, menu->p2_nome);
+        Game* game = initGame(0, menu->p1_nome, menu->p2_nome);
         free(menu);
 
         while (game->players[0].vivo && game->players[1].vivo && !WindowShouldClose()) {
@@ -33,7 +32,7 @@ int main(void) {
         }
 
         EndMenu* endmenu = initEndMenu(game, &placar);
-        freeGame(game);
+        free(game);
 
         while(!endmenu->exit && !IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
             endMenuLoop(endmenu, &placar);

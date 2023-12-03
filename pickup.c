@@ -1,52 +1,51 @@
 #include "pickup.h"
+#include <stdio.h>
 
-Pickup* initPickup(int x, int y) {
-    Pickup* p = (Pickup*)malloc(sizeof(Pickup));
-    p->pos = (Rectangle){x + 4, y + 4, STD_SIZE_ENT, STD_SIZE_ENT};
-    p->type = rand() % 3;
-    switch (p->type) {
-        case 0:
-            p->color = BLUE;
-            break;
-        case 1:
-            p->color = YELLOW;
-            break;
-        case 2:
-            p->color = GREEN;
-            break;
+void initPickup(Pickup* p, int x, int y) {
+    static int type = 0;
+    int actual_type = type / 2;
+    p->tile_x = x;
+    p->tile_y = y;
+    p->pos = (Rectangle){x*40 + 4, y*40 + 4, 32, 32};
+    if (actual_type == 0) {
+        p->type = 0;
+        p->color = BLUE;
+    } else if (0 < actual_type && actual_type <= 2) {
+        p->type = 1;
+        p->color = YELLOW;
+    } else {
+        p->type = 2;
+        p->color = GREEN;
     }
-    return p;
+    type++;
+    type %= 10;
 }
 
 void colPlayerPickups(Game* game, Player* player) {
-    for (int i = 0; i < game->n_pickups; i++) {
-        if (CheckCollisionRecs(player->pos, game->pickups[i]->pos)) {
-            switch (game->pickups[i]->type) {
+    for (int i = 0; i < game->total_pickups; i++) {
+        if (CheckCollisionRecs(player->pos, game->pickups[i].pos)) {
+            switch (game->pickups[i].type) {
                 case 0:
-                    if (player->speed < 6) {
-                        player->speed++;
-                    }
+                    player->speed++;
                     break;
                 case 1:
-                    if (player->num_bombs < 5) {
-                        player->num_bombs++;
-                    }
+                    player->num_bombs++;
                     break;
                 case 2:
-                    if (player->bomb_distance < 5) {
-                        player->bomb_distance++;
-                    }
+                    player->bomb_distance++;
                     break;
             }
-            free(game->pickups[i]);
-            game->pickups[i] = game->pickups[game->n_pickups - 1]; 
-            game->n_pickups -= 1;
+            game->pickups[i] = game->pickups[game->total_pickups - 1]; 
+            game->pickups[game->total_pickups-1].pos = (Rectangle){-40, -40, 0, 0}; 
+            game->total_pickups -= 1;
+            printf("%d\n", game->total_pickups);
+            return;
         }
     }
 }
 
-void drawPickup(Pickup** pickups, int n) {
+void drawPickup(Pickup* pickups, int n) {
     for (int i = 0; i < n; i++) {
-        DrawRectangleRec(pickups[i]->pos, pickups[i]->color);
+        DrawRectangleRec(pickups[i].pos, pickups[i].color);
     }
 }

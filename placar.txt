@@ -1,0 +1,6 @@
+g VS gg
+Vitórias de g: 0
+Vitórias de gg: 1
+Empates: 0
+
+

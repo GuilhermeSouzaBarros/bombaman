@@ -13,7 +13,7 @@
 #define SCREEN_BORDER 4
 
 int colBarrier(Map *map, Rectangle target);
-Map mapSetup(int num_map);
+void mapSetup(Game* game, int num_map);
 void draw_map(Map *map);
 
 #endif
