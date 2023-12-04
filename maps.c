@@ -16,6 +16,53 @@ int colBarrier(Map *map, Rectangle target){
     return 0;
 }
 
+int collisionEspecial0X(Game* game, Player* player) {
+    for (int i = 0; i < game->map.n_especiais; i++) {
+        if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
+            Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
+            if (i % 2) {
+                if (player->pos.x + 16 <= colisao.x) {
+                    return -colisao.width;
+                } else {
+                    return colisao.width;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int collisionEspecial0Y(Game* game, Player* player) {
+    for (int i = 0; i < game->map.n_especiais; i++) {
+        if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
+            Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
+            if (!(i % 2)) {
+                if (player->pos.y + 16 <= colisao.y) {
+                    return -colisao.height;
+                } else {
+                    return colisao.height;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+
+int checkCollisionEspecialX(Game* game, Player* player) {
+    switch(game->map.map_num) {
+        case 0:
+            return collisionEspecial0X(game, player);
+    }
+}
+
+int checkCollisionEspecialY(Game* game, Player* player) {
+    switch(game->map.map_num) {
+        case 0:
+            return collisionEspecial0Y(game, player);
+    }
+}
+
 void baseSetup(Game* game){
     Map* map = &game->map;
     map->num_barriers_line = 15;
@@ -67,10 +114,38 @@ void baseSetup(Game* game){
     map->color = GRAY;
 }
 
+void map0Especial(Map* map) {
+    map->map_num = 0;
+    Rectangle especiais[4];
+    int n_rec = 2;
+    int tile_x = rand() % 6 + 2;
+    int tile_y = rand() % 6 + 2;
+    
+    especiais[0] = (Rectangle){0, STD_SIZE * tile_x + 16, 15 * STD_SIZE, 8};
+    especiais[1] = (Rectangle){STD_SIZE * tile_y + 16, 0, 8, 15 * STD_SIZE};
+
+    if (tile_x != 7) {
+        especiais[2] = (Rectangle){0, STD_SIZE * (14 - tile_x) + 16, 15 * STD_SIZE, 8};
+        n_rec++;
+    }
+
+    if (tile_y != 7) {
+        especiais[3] = (Rectangle){STD_SIZE * (14 - tile_y) + 16, 0, 8, 15 * STD_SIZE};
+        n_rec++;
+    }
+
+    map->n_especiais = n_rec;
+    map->especial = (Rectangle*)malloc(sizeof(Rectangle) * n_rec);
+    for (int i = 0; i < n_rec; i++) {
+        map->especial[i] = especiais[i];
+    }
+}
+
 void mapSetup(Game* game, int num_map) {
+    baseSetup(game);
     switch (num_map) {
         case 0:
-            baseSetup(game);
+            map0Especial(&game->map);
     }
 }
 
@@ -94,4 +169,10 @@ void draw_map(Map *map){
         }
     }
     DrawRectangleLinesEx((Rectangle){39, 39, 522, 522}, 1, BLACK);
+}
+
+void drawEspecials(Game* game) {
+    for (int i = 0; i < game->map.n_especiais; i++) {
+        DrawRectangleRec(game->map.especial[i], (Color){255, 128, 0, 128});
+    }
 }

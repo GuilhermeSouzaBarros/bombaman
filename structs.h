@@ -9,7 +9,10 @@ typedef struct Barriers {
 } Barriers;
 
 typedef struct Map {
+    int map_num;
     Barriers barriers;
+    Rectangle* especial;
+    int n_especiais;
     int num_barriers_line;
     int num_barriers_coln;
     Color color;

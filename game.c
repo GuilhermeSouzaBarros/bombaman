@@ -8,7 +8,7 @@
 
 Game* initGame(int map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
-    initPlayer(&g->players[0], p1_nome, ORANGE, (Rectangle){44, 44, STD_SIZE_ENT, STD_SIZE_ENT});
+    initPlayer(&g->players[0], p1_nome, GOLD, (Rectangle){44, 44, STD_SIZE_ENT, STD_SIZE_ENT});
     initPlayer(&g->players[1], p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT, STD_SIZE_ENT});
     g->total_pickups = 0;
     g->start_time = GetTime();
@@ -50,28 +50,30 @@ void updateGame(Game* game) {
     }
 }
 
-void DrawGame(Game *g, Placar* placar) {
+void DrawGame(Game *game, Placar* placar) {
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
-    draw_map(&g->map);
+    draw_map(&game->map);
     
-    drawPickup(g->pickups, g->total_pickups);
+    drawPickup(game->pickups, game->total_pickups);
 
-    draw_bomb(g->players[0].bombs, g->players[0].num_bombs);
-    draw_bomb(g->players[1].bombs, g->players[1].num_bombs);
+    draw_bomb(game->players[0].bombs, game->players[0].num_bombs);
+    draw_bomb(game->players[1].bombs, game->players[1].num_bombs);
 
-    DrawRectangleRec(g->players[0].pos, g->players[0].color);
-    DrawRectangleRec(g->players[1].pos, g->players[1].color);
+    DrawRectangleRec(game->players[0].pos, game->players[0].color);
+    DrawRectangleRec(game->players[1].pos, game->players[1].color);
 
-    DrawText(g->players[0].nome, 630, 5, 30, g->players[0].color);
-    DrawText(g->players[1].nome, 630, 40, 30, g->players[1].color);
+    DrawText(game->players[0].nome, 630, 5, 30, game->players[0].color);
+    DrawText(game->players[1].nome, 630, 40, 30, game->players[1].color);
 
-    if (g->time < 120) {
+    drawEspecials(game);
+
+    if (game->time < 120) {
         DrawText(
-            TextFormat("%02d:%02d:%02d\n", 1 - (int)(g->time/60),
-                                          60 - (int) g->time,
-                                         100 - (int)(g->time * 100) % 100),
+            TextFormat("%02d:%02d:%02d\n", 1 - (int)(game->time/60),
+                                          60 - (int) game->time,
+                                         100 - (int)(game->time * 100) % 100),
             630, 100, 40, BLACK);
     } else {
         DrawText("TIMES UP!", 610, 100, 34, BLACK);

@@ -22,7 +22,7 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     player->vivo = 1;
 }
 
-void updateMovement(Game* game, Player* player, float* cord, int speed) {
+int updateMovement(Game* game, Player* player, float* cord, int speed) {
     while (speed) {
         int col=0;
         *cord += speed;
@@ -31,11 +31,12 @@ void updateMovement(Game* game, Player* player, float* cord, int speed) {
             colBombasRec(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
             *cord -= speed;
         } else {
-            break;
+            return 1;
         }
         if (speed > 0) speed--;
         else speed++;
     }
+    return 0;
 }
 
 void updatePlayersPos(Game* game){
@@ -44,14 +45,26 @@ void updatePlayersPos(Game* game){
     if (IsKeyDown(KEY_A)) vel_x -= game->players[0].speed;
     if (IsKeyDown(KEY_S)) vel_y += game->players[0].speed;
     if (IsKeyDown(KEY_D)) vel_x += game->players[0].speed;
-    updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
-    updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+    vel_x = updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
+    vel_y = updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+    if (!(vel_x || vel_y) && game->map.map_num == 0) {
+        vel_x = checkCollisionEspecialX(game, &game->players[0]);
+        vel_y = checkCollisionEspecialY(game, &game->players[0]);
+        updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
+        updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+    }
 
     vel_x = 0, vel_y = 0;
     if (IsKeyDown(KEY_I)) vel_y -= game->players[1].speed;
     if (IsKeyDown(KEY_J)) vel_x -= game->players[1].speed;
     if (IsKeyDown(KEY_K)) vel_y += game->players[1].speed;
     if (IsKeyDown(KEY_L)) vel_x += game->players[1].speed;
-    updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
-    updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+    vel_x = updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
+    vel_y = updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+    if (!(vel_x || vel_y) && game->map.map_num == 0) {
+        vel_x = checkCollisionEspecialX(game, &game->players[1]);
+        vel_y = checkCollisionEspecialY(game, &game->players[1]);
+        updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
+        updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+    }
 }
