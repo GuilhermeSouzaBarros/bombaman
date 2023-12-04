@@ -68,3 +68,17 @@ void updatePlayersPos(Game* game){
         updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
     }
 }
+
+void colPucciPlayer(Game* game, Player* player, int p) {
+    if (CheckCollisionRecs(player->pos, *game->map.especial)) {
+        game->map.pucci_pickup_steal_info[0] = player->speed - 2;
+        game->map.pucci_pickup_steal_info[1] = player->num_bombs - 1;
+        game->map.pucci_pickup_steal_info[2] = player->bomb_distance - 1;
+        game->map.pucci_pickup_steal_info[3] = 1;
+        game->map.pucci_pickup_steal_info[4] = p;
+        player->speed = 2;
+        player->num_bombs = 1;
+        player->bomb_distance = 1;
+        game->map.pucci_steal_time = GetTime();
+    }
+}

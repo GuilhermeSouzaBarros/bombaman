@@ -14,12 +14,13 @@ Menu* initMenu(Placar* placar) {
     menu->p2_qletras = strlen(menu->p2_nome);
     menu->screen     = placar->rematch;
     menu->game_start = 0;
+    menu->map = 0;
     return menu;
 }
 
 EndMenu* initEndMenu(Game* game, Placar* placar) {
     EndMenu* endmenu = (EndMenu*)malloc(sizeof(EndMenu));
-    endmenu->map = game->map;
+    endmenu->num_map = game->map.map_num;
     strcpy(endmenu->p1_nome, game->players[0].nome);
     strcpy(endmenu->p2_nome, game->players[1].nome);
     if (!WindowShouldClose()) {
@@ -82,29 +83,49 @@ void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
 }
 
 void updateScreen1(Menu *menu, Placar* placar) {
-    if (clickRec((Rectangle){50, 200, 300, 50})) {
+    if (clickRec((Rectangle){75, 150, 300, 50})) {
         menu->text_input_1 = 1;
     }
-    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){50, 200, 300, 50}, &menu->text_input_1);
-    if (clickRec((Rectangle){50, 300, 300, 50})) {
+    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1);
+    if (clickRec((Rectangle){425, 150, 300, 50})) {
         menu->text_input_2 = 1;
     }
-    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){50, 300, 300, 50}, &menu->text_input_2);
+    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2);
     if (clickRec((Rectangle){588, 513, 200, 75}) && menu->p1_qletras && menu->p2_qletras) {
         menu->game_start = 1;
         return;
     }
 
+    if (clickRec((Rectangle){100, 250, 250, 150})) {
+        menu->map = 0;
+        placar->next_map = 0;
+    }
+
+    if (clickRec((Rectangle){450, 250, 250, 150})) {
+        menu->map = 1;
+        placar->next_map = 1;
+    }
+
     BeginDrawing();
     ClearBackground(DARKGRAY);
     
-    DrawRectangleRec((Rectangle){50, 200, 300, 50}, WHITE);
-    DrawRectangleLinesEx((Rectangle){50, 200, 300, 50}, 1, BLACK);
-    DrawText(menu->p1_nome, 55, 208, 40, BLACK);
+    DrawRectangleRec((Rectangle){75, 150, 300, 50}, WHITE);
+    DrawRectangleLinesEx((Rectangle){75, 150, 300, 50}, 1, BLACK);
+    DrawText(menu->p1_nome, 80, 158, 40, BLACK);
     
-    DrawRectangleRec((Rectangle){50, 300, 300, 50}, WHITE);
-    DrawRectangleLinesEx((Rectangle){50, 300, 300, 50}, 1, BLACK);
-    DrawText(menu->p2_nome, 55, 308, 40, BLACK);
+    DrawRectangleRec((Rectangle){425, 150, 300, 50}, WHITE);
+    DrawRectangleLinesEx((Rectangle){425, 150, 300, 50}, 1, BLACK);
+    DrawText(menu->p2_nome, 430, 158, 40, BLACK);
+
+    DrawRectangleRec((Rectangle){100, 250, 250, 150}, ORANGE);
+    if (!menu->map) {
+        DrawRectangleLinesEx((Rectangle){100, 250, 250, 150}, 1, BLACK);
+    }
+
+    DrawRectangleRec((Rectangle){450, 250, 250, 150}, WHITE);
+    if (menu->map) {
+        DrawRectangleLinesEx((Rectangle){450, 250, 250, 150}, 1, BLACK);
+    }
 
     if(menu->p1_qletras && menu->p2_qletras) {
         DrawRectangleRec((Rectangle){588, 513, 200, 75}, RED);
@@ -141,6 +162,7 @@ void atualizaPlacar(EndMenu* endmenu, Placar* placar) {
 void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     if (clickRec((Rectangle){75, 400, 300, 100})) {
         placar->rematch = 1;
+        placar->next_map = !endmenu->num_map;
         endmenu->exit = 1;
         return;
     }

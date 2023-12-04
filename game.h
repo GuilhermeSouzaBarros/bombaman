@@ -8,6 +8,8 @@
 #define GAME
 
 Game* initGame(int map, char* p1_nome, char* p2_nome);
+void freeGame(Game* game);
 void gameLoop(Game *g, Placar* placar);
+
 
 #endif

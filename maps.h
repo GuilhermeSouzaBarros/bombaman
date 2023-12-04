@@ -11,6 +11,8 @@
 #define STD_SIZE_ENT 32
 #define STD_SIZE_DIF 4
 
+int colExplosion (Bomb bombs[], int n, Rectangle target);
+int colPerBombaExplosion(Bomb* bomb, Game* game);
 int colBarrier(Map *map, Rectangle target);
 int checkCollisionEspecialX(Game* game, Player* player);
 int checkCollisionEspecialY(Game* game, Player* player);
@@ -18,5 +20,6 @@ int checkCollisionEspecialY(Game* game, Player* player);
 void mapSetup(Game* game, int num_map);
 void draw_map(Map *map);
 void drawEspecials(Game* game);
+void updatePucci(Game* game); // map 1
 
 #endif

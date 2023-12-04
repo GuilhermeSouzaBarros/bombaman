@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "funcoes.h": "c",
+        "bombas.h": "c",
         "raylib.h": "c",
         "string.h": "c",
         "player.h": "c",

@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "math.h"
 
 Game* initGame(int map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
@@ -17,8 +18,14 @@ Game* initGame(int map, char* p1_nome, char* p2_nome){
     return g;
 }
 
+void freeGame(Game* game) {
+    free(game->map.especial);
+    free(game);
+}
+
 void updateGame(Game* game) {
     game->time = GetTime() - game->start_time;
+
     if (game->time < 120) {
         updatePlayersPos(game);
     } else {
@@ -37,6 +44,27 @@ void updateGame(Game* game) {
             game->players[1].vivo = 0;
         }
     }
+
+    switch (game->map.map_num) {
+        case 0:
+            break;
+        case 1:
+            if (GetTime() - game->map.pucci_steal_time > 20 &&
+                game->map.pucci_pickup_steal_info[3] == 1) {
+                int p_indice = game->map.pucci_pickup_steal_info[4];
+                game->players[p_indice].speed += game->map.pucci_pickup_steal_info[0];
+                game->players[p_indice].num_bombs += game->map.pucci_pickup_steal_info[1];
+                game->players[p_indice].bomb_distance += game->map.pucci_pickup_steal_info[2];
+                game->map.pucci_pickup_steal_info[3] = 0;
+            } 
+            if (!game->map.pucci_pickup_steal_info[3]) {
+                updatePucci(game);
+                colPucciPlayer(game, &game->players[0], 0);
+            }
+            if (!game->map.pucci_pickup_steal_info[3]) colPucciPlayer(game, &game->players[1], 1);
+            break;
+    }
+
     colPlayerPickups(game, &game->players[0]);
     colPlayerPickups(game, &game->players[1]);
     updateBombs(game);
@@ -54,10 +82,9 @@ void DrawGame(Game *game, Placar* placar) {
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
+    drawPickup(game->pickups, game->total_pickups);
     draw_map(&game->map);
     
-    drawPickup(game->pickups, game->total_pickups);
-
     draw_bomb(game->players[0].bombs, game->players[0].num_bombs);
     draw_bomb(game->players[1].bombs, game->players[1].num_bombs);
 
@@ -72,8 +99,8 @@ void DrawGame(Game *game, Placar* placar) {
     if (game->time < 120) {
         DrawText(
             TextFormat("%02d:%02d:%02d\n", 1 - (int)(game->time/60),
-                                          60 - (int) game->time,
-                                         100 - (int)(game->time * 100) % 100),
+                                          59 - (int) game->time % 60,
+                                          99 - (int)(game->time * 100) % 100),
             630, 100, 40, BLACK);
     } else {
         DrawText("TIMES UP!", 610, 100, 34, BLACK);

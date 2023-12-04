@@ -13,6 +13,8 @@ typedef struct Map {
     Barriers barriers;
     Rectangle* especial;
     int n_especiais;
+    int pucci_pickup_steal_info[5];
+    double pucci_steal_time;
     int num_barriers_line;
     int num_barriers_coln;
     Color color;
@@ -68,6 +70,7 @@ typedef struct Menu {
     int p1_qletras;
     char* p2_nome;
     int p2_qletras;
+    int map;
 } Menu;
 
 typedef struct EndMenu {
@@ -76,7 +79,7 @@ typedef struct EndMenu {
     int winner; // | 0: Draw |
     Color winner_color;
     int exit;
-    Map map;
+    int num_map;
 } EndMenu;
 
 typedef struct Placar {
@@ -86,6 +89,7 @@ typedef struct Placar {
     char p1_nome[10];
     char p2_nome[10];
     int rematch;
+    int next_map;
 } Placar;
 
 #endif

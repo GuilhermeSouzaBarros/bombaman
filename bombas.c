@@ -50,38 +50,6 @@ void initBomb(Game* game, Player player, Bomb* bomb) {
     bomb->fastExplode = 0;
 }
 
-int colExplosion (Bomb bombs[], int n, Rectangle target) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (CheckCollisionRecs(target, bombs[i].explosions[j]) &&
-                    bombs[i].hasExploded) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
-int colPerBombaExplosion(Bomb* bomb, Game* game) {
-    for (int i = 0; i < game->players[0].num_bombs; i++) {
-        if (bomb == &game->players[0].bombs[i]) continue;
-        if (game->players[0].bombs[i].isActive && game->players[0].bombs[i].hasExploded) {
-            if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, bomb->pos)) {
-                return 1;
-            }
-        }
-    }
-    for (int i = 0; i < game->players[1].num_bombs; i++) {
-        if (bomb == &game->players[1].bombs[i]) continue;
-        if (game->players[1].bombs[i].isActive && game->players[1].bombs[i].hasExploded) {
-            if (colExplosion(game->players[1].bombs, game->players[1].num_bombs, bomb->pos)) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 void colBombas(Game* game) {
     Bomb* bomb;
     for (int i = 0; i < game->players[0].num_bombs; i++) {
@@ -146,7 +114,7 @@ void explodeBombs(Game* game, Player* player){
     for(int i = 0; i < player->num_bombs; i++){
         if(player->bombs[i].isActive){
             Bomb* bomb = &player->bombs[i];
-            if ((fabs(bomb->time - GetTime()) > 3 && fabs(bomb->time - GetTime()) < 4) || bomb->fastExplode){
+            if ((fabs(bomb->time - GetTime()) > 2 && fabs(bomb->time - GetTime()) < 3) || bomb->fastExplode){
                 if (bomb->isActiveFirstFrame) {
                     for (int j = 0; j < 4; j++) {
                         bomb->explosions[j] = (Rectangle){bomb->pos.x - STD_SIZE_DIF, bomb->pos.y - STD_SIZE_DIF, STD_SIZE, STD_SIZE};
@@ -191,7 +159,7 @@ void explodeBombs(Game* game, Player* player){
                     }
                 }
             }
-            if (fabs(bomb->time - GetTime()) > 4){
+            if (fabs(bomb->time - GetTime()) > 3){
                 bomb->pos = (Rectangle) {0, 0, 0, 0};
                 for (int j = 0; j < 4; j++) {
                     bomb->explosions[j] = (Rectangle) {0, 0, 0, 0};
