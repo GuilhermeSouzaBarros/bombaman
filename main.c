@@ -23,7 +23,7 @@ int main(void) {
         while (!placar.rematch && !menu->game_start && !WindowShouldClose()) {
             menuLoop(menu, &placar);
         }
-        
+
         Game* game = initGame(0, menu->p1_nome, menu->p2_nome);
         free(menu);
 
@@ -33,10 +33,14 @@ int main(void) {
 
         EndMenu* endmenu = initEndMenu(game, &placar);
         free(game);
-
+        
         while(!endmenu->exit && !IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
             endMenuLoop(endmenu, &placar);
         }
+        
+        if (WindowShouldClose() && (placar.p1_wins || placar.p2_wins || placar.draws))
+            atualizaPlacar(endmenu, &placar);
+        
         free(endmenu);
     }
     return 0;

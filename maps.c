@@ -16,7 +16,7 @@ int colBarrier(Map *map, Rectangle target){
     return 0;
 }
 
-void map0_setup(Game* game){
+void baseSetup(Game* game){
     Map* map = &game->map;
     map->num_barriers_line = 15;
     map->num_barriers_coln = 15;
@@ -70,7 +70,7 @@ void map0_setup(Game* game){
 void mapSetup(Game* game, int num_map) {
     switch (num_map) {
         case 0:
-            map0_setup(game);
+            baseSetup(game);
     }
 }
 

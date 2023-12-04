@@ -1,4 +1,3 @@
-#include "structs.h"
 #include "menu.h"
 #include "maps.h"
 
@@ -23,18 +22,20 @@ EndMenu* initEndMenu(Game* game, Placar* placar) {
     endmenu->map = game->map;
     strcpy(endmenu->p1_nome, game->players[0].nome);
     strcpy(endmenu->p2_nome, game->players[1].nome);
-    if (game->players[0].vivo) {
-        placar->p1_wins++;
-        endmenu->winner = 1;
-        endmenu->winner_color = game->players[0].color;
-    } else if (game->players[1].vivo) {
-        placar->p2_wins++;
-        endmenu->winner = 2;
-        endmenu->winner_color = game->players[1].color;
-    } else {
-        placar->draws++;
-        endmenu->winner = 0;
-        endmenu->winner_color = LIGHTGRAY;
+    if (!WindowShouldClose()) {
+        if (game->players[0].vivo) {
+            placar->p1_wins++;
+            endmenu->winner = 1;
+            endmenu->winner_color = game->players[0].color;
+        } else if (game->players[1].vivo) {
+            placar->p2_wins++;
+            endmenu->winner = 2;
+            endmenu->winner_color = game->players[1].color;
+        } else {
+            placar->draws++;
+            endmenu->winner = 0;
+            endmenu->winner_color = LIGHTGRAY;
+        }
     }
     endmenu->exit = 0;
     return endmenu;
@@ -126,6 +127,17 @@ void menuLoop(Menu* menu, Placar* placar) {
     }
 }
 
+void atualizaPlacar(EndMenu* endmenu, Placar* placar) {
+    FILE* placar_file = fopen("placar.txt", "a");
+    fputs(TextFormat("%s VS %s\n", placar->p1_nome, placar->p2_nome), placar_file);
+    fputs(TextFormat("Vitórias de %s: %d\n", placar->p1_nome, placar->p1_wins), placar_file);
+    fputs(TextFormat("Vitórias de %s: %d\n", placar->p2_nome, placar->p2_wins), placar_file);
+    fputs(TextFormat("Empates: %d\n\n", placar->draws), placar_file);
+    fclose(placar_file);
+    *placar = (Placar){0, 0, 0, 0, 0, 0};
+    endmenu->exit = 1;
+}
+
 void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     if (clickRec((Rectangle){75, 400, 300, 100})) {
         placar->rematch = 1;
@@ -133,15 +145,9 @@ void endMenuLoop(EndMenu* endmenu, Placar* placar) {
         return;
     }
 
-    if (clickRec((Rectangle){425, 400, 300, 100})) {
-        FILE* placar_file = fopen("placar.txt", "a");
-        fputs(TextFormat("%s VS %s\n", placar->p1_nome, placar->p2_nome), placar_file);
-        fputs(TextFormat("Vitórias de %s: %d\n", placar->p1_nome, placar->p1_wins), placar_file);
-        fputs(TextFormat("Vitórias de %s: %d\n", placar->p2_nome, placar->p2_wins), placar_file);
-        fputs(TextFormat("Empates: %d\n\n\n", placar->draws), placar_file);
-        fclose(placar_file);
-        *placar = (Placar){0, 0, 0, 0, 0, 0};
-        endmenu->exit = 1;
+    if ((WindowShouldClose() || clickRec((Rectangle){425, 400, 300, 100})) &&
+        (placar->p1_wins || placar->p2_wins || placar->draws)) {
+        atualizaPlacar(endmenu, placar);
         return;
     }
 
@@ -149,15 +155,18 @@ void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     ClearBackground(DARKGRAY);
 
     char text[20];
+    Color color = {192, 192, 192, 255};
     if (endmenu->winner == 1) {
         strcpy(text, TextFormat("%s GANHOU!", endmenu->p1_nome));
+        color = endmenu->winner_color;
     } else if (endmenu->winner == 2) {
         strcpy(text, TextFormat("%s GANHOU!", endmenu->p2_nome));
+        color = endmenu->winner_color;
     } else {
-        strcpy(text, TextFormat("EMPATE", endmenu->winner));
+        strcpy(text, "EMPATE");
     }
 
-    DrawText(text, 400 - (MeasureText(text, 50)/2), 150, 50, endmenu->winner_color);
+    DrawText(text, 400 - (MeasureText(text, 50)/2), 150, 50, color);
 
     DrawRectangleRec((Rectangle){75, 400, 300, 100}, BLUE);
     DrawText("REMATCH!", 225 - (MeasureText("REMATCH!", 50)/2), 425, 50, BLACK);

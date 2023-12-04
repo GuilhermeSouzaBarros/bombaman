@@ -115,16 +115,18 @@ int colBombasRec(Rectangle target, Bomb bombs[], int n_bombs) {
     return 0;
 }
 
-void colDestroyable(Game* game, Rectangle explosion) {
+int colDestroyable(Game* game, Rectangle explosion) {
     for(int i = 0; i < game->map.num_barriers_line; i++){
         for (int j = 0; j < game->map.num_barriers_coln; j++) {
             if (game->map.barriers.types[i][j] == 2 || game->map.barriers.types[i][j] == 3) {
                 if(CheckCollisionRecs(explosion, game->map.barriers.barriers[i][j])){
                     game->map.barriers.types[i][j] = 0;
+                    return 1;
                 }
             }
         }
     }
+    return 0;
 }
 
 void placeBomb (Game* game, Player* player) {
@@ -148,40 +150,41 @@ void explodeBombs(Game* game, Player* player){
                 if (bomb->isActiveFirstFrame) {
                     for (int j = 0; j < 4; j++) {
                         bomb->explosions[j] = (Rectangle){bomb->pos.x - STD_SIZE_DIF, bomb->pos.y - STD_SIZE_DIF, STD_SIZE, STD_SIZE};
+                        bomb->stop_explosion[j] = 0;
                     }
                     bomb->hasExploded = 1;
                     bomb->isActiveFirstFrame = 0;
                 } else {
-                    if (bomb->explosions[0].height/STD_SIZE - 1 < bomb->distance) {
+                    if ((bomb->explosions[0].height/STD_SIZE - 1 < bomb->distance) && !bomb->stop_explosion[0]) {
                         Rectangle next_step = bomb->explosions[0];
                         next_step.y -= STD_SIZE;
                         next_step.height += STD_SIZE;
-                        colDestroyable(game, next_step);
+                        if (colDestroyable(game, next_step)) bomb->stop_explosion[0] = 1;
                         if (!colBarrier(&game->map, next_step)) {
                             bomb->explosions[0] = next_step;
                         }
                     }
-                    if (bomb->explosions[1].width/STD_SIZE - 1 < bomb->distance) {
+                    if ((bomb->explosions[1].width/STD_SIZE - 1 < bomb->distance) && !bomb->stop_explosion[1]) {
                         Rectangle next_step = bomb->explosions[1];
                         next_step.x -= STD_SIZE;
                         next_step.width += STD_SIZE;
-                        colDestroyable(game, next_step);
+                        if (colDestroyable(game, next_step)) bomb->stop_explosion[1] = 1;
                         if (!colBarrier(&game->map, next_step)) {
                             bomb->explosions[1] = next_step;
                         }
                     }
-                    if (bomb->explosions[2].height/STD_SIZE - 1 < bomb->distance) {
+                    if ((bomb->explosions[2].height/STD_SIZE - 1 < bomb->distance) && !bomb->stop_explosion[2]) {
                         Rectangle next_step = bomb->explosions[2];
                         next_step.height += STD_SIZE;
-                        colDestroyable(game, next_step);
+                        if (colDestroyable(game, next_step)) bomb->stop_explosion[2] = 1;
                         if (!colBarrier(&game->map, next_step)) {
                             bomb->explosions[2] = next_step;
                         }
                     }
-                    if (bomb->explosions[3].width/STD_SIZE - 1 < bomb->distance) {
+                    if ((bomb->explosions[3].width/STD_SIZE - 1 < bomb->distance) && !bomb->stop_explosion[3]) {
                         Rectangle next_step = bomb->explosions[3];
                         next_step.width += STD_SIZE;
-                        colDestroyable(game, next_step);
+                        if (colDestroyable(game, next_step)) bomb->stop_explosion[3] = 1;
                         if (!colBarrier(&game->map, next_step)) {
                             bomb->explosions[3] = next_step;
                         }
@@ -192,6 +195,7 @@ void explodeBombs(Game* game, Player* player){
                 bomb->pos = (Rectangle) {0, 0, 0, 0};
                 for (int j = 0; j < 4; j++) {
                     bomb->explosions[j] = (Rectangle) {0, 0, 0, 0};
+                    bomb->stop_explosion[j] = 0;
                 }
                 bomb->isActive = 0;
                 bomb->hasColision = 0;

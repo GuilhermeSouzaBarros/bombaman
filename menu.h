@@ -11,4 +11,6 @@ EndMenu* initEndMenu(Game* game, Placar* placar);
 void menuLoop(Menu* menu, Placar* placar);
 void endMenuLoop(EndMenu* endmenu, Placar* placar);
 
+void atualizaPlacar(EndMenu* endmenu, Placar* placar);
+
 #endif

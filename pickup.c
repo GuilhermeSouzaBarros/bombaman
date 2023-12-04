@@ -1,5 +1,4 @@
 #include "pickup.h"
-#include <stdio.h>
 
 void initPickup(Pickup* p, int x, int y) {
     static int type = 0;
@@ -38,7 +37,6 @@ void colPlayerPickups(Game* game, Player* player) {
             game->pickups[i] = game->pickups[game->total_pickups - 1]; 
             game->pickups[game->total_pickups-1].pos = (Rectangle){-40, -40, 0, 0}; 
             game->total_pickups -= 1;
-            printf("%d\n", game->total_pickups);
             return;
         }
     }

@@ -16,6 +16,7 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
         player->bombs[i].pos = (Rectangle){0, 0, 0, 0};
         for (int j = 0; j < 4; j++) {
             player->bombs[i].explosions[j] = (Rectangle){0, 0, 0, 0};
+            player->bombs[i].stop_explosion[j] = 0;
         }
     }
     player->vivo = 1;

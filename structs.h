@@ -26,6 +26,7 @@ typedef struct Pickup {
 typedef struct Bomb{
     Rectangle pos;
     Rectangle explosions[4]; // | 0: up | 1: left | 2: down | 3: right |
+    int stop_explosion[4];   // | i0: up | i1: left | i2: down | i3: right | 1: stop;
     int isActive;
     int isActiveFirstFrame;
     int hasExploded;
