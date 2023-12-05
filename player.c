@@ -21,6 +21,8 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     }
     player->vivo = 1;
     player->sprite = LoadTexture("sprites/sans_spritesheet.png");
+    player->facing = 0;
+    player->is_moving = 0;
 }
 
 int updateMovement(Game* game, Player* player, float* cord, int speed) {
@@ -32,11 +34,12 @@ int updateMovement(Game* game, Player* player, float* cord, int speed) {
             colBombasRec(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
             *cord -= speed;
         } else {
-            return 1;
+            return speed;
         }
         if (speed > 0) speed--;
         else speed++;
     }
+    printf("não ta andando tolo\n");
     return 0;
 }
 
@@ -49,10 +52,23 @@ void updatePlayersPos(Game* game){
     vel_x = updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
     vel_y = updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
     if (!(vel_x || vel_y) && game->map.map_num == 0) {
+        game->players[0].is_moving = 0;
         vel_x = checkCollisionEspecialX(game, &game->players[0]);
         vel_y = checkCollisionEspecialY(game, &game->players[0]);
         updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
         updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+    } else {
+        game->players[0].is_moving = 1;
+        if (vel_y > 0) {
+            game->players[0].facing = 0;
+        } else if (vel_y < 0) {
+            game->players[0].facing = 3;
+        }
+        if (vel_x > 0) {
+            game->players[0].facing = 2;
+        } else if (vel_x < 0) {
+            game->players[0].facing = 1;
+        }
     }
 
     vel_x = 0, vel_y = 0;
@@ -83,4 +99,13 @@ void colPucciPlayer(Game* game, Player* player, int p) {
         player->bomb_distance = 1;
         game->map.pucci_steal_time = GetTime();
     }
+}
+
+void drawPlayerSprite(Game* game, Player* player) {
+    DrawTexturePro(player->sprite,
+                   (Rectangle){ 28 * (!(!player->is_moving)) * (((int)(((player->speed + 2) * game->time)) % 3 + 1)),
+                                51 * player->facing + 1, 25, 30},
+                   (Rectangle){player->pos.x + 2, player->pos.y, 30, 36},
+                   (Vector2){0, 0},
+                   0, WHITE);
 }

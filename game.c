@@ -93,12 +93,10 @@ void DrawGame(Game *game, Placar* placar) {
     draw_bomb(game->players[0].bombs, game->players[0].num_bombs);
     draw_bomb(game->players[1].bombs, game->players[1].num_bombs);
 
-    DrawTexturePro(game->players[0].sprite, (Rectangle){0, 1, 25, 30},
-                   (Rectangle){game->players[0].pos.x+3, game->players[0].pos.y, 30, 36},
-                   (Vector2){0, 0},
-                   0, WHITE);
+    drawPlayerSprite(game, &game->players[0]);
     DrawRectangleRec(game->players[1].pos, game->players[1].color);
 
+    DrawText(game->players[0].nome, 640, 10, 30, game->players[0].color);
     DrawText(game->players[1].nome, 630, 40, 30, game->players[1].color);
 
     drawEspecials(game);
