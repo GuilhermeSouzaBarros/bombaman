@@ -3,6 +3,12 @@
 #ifndef STRUCTS
 #define STRUCTS
 
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define STD_SIZE 40
+#define STD_SIZE_ENT 36
+#define STD_SIZE_DIF 2
+
 typedef struct Barriers {
     Rectangle barriers[15][15];
     int types[15][15]; //| 0: Nothing | 1: Wall | 2: Destructible | 3: Pickup |
@@ -44,6 +50,7 @@ typedef struct Bomb{
 typedef struct Player {
     Rectangle pos;
     Color color;
+    Texture2D sprite;
     char* nome;
     int speed;
     Bomb bombs[5];

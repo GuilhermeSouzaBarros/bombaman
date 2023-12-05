@@ -15,6 +15,7 @@
 int main(void) {
     srand(time(NULL));
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "BOMBAMAN");
+    InitAudioDevice();
     SetTargetFPS(60);
     SetExitKey(KEY_DELETE);
     Placar placar = {0, 0, 0, 0, 0, 0, 0};
@@ -26,7 +27,7 @@ int main(void) {
 
         Game* game = initGame(placar.next_map, menu->p1_nome, menu->p2_nome);
         free(menu);
-
+        
         while (game->players[0].vivo && game->players[1].vivo && !WindowShouldClose()) {
             gameLoop(game, &placar);
         }
@@ -43,5 +44,7 @@ int main(void) {
         
         free(endmenu);
     }
+    CloseAudioDevice();
+    CloseWindow();
     return 0;
 }

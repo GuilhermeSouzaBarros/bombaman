@@ -18,17 +18,17 @@ void draw_bomb(Bomb bombs[], int n){
 }
 
 int tileHasBomb(Game* game, int x, int y) {
-    x += 16;
-    y += 16;
-    x /= 40;
-    y /= 40;
+    x += STD_SIZE_ENT/2;
+    y += STD_SIZE_ENT/2;
+    x /= STD_SIZE;
+    y /= STD_SIZE;
     Bomb bomb_p1, bomb_p2;
     for (int i = 0; i < 5; i ++) {
         bomb_p1 = game->players[0].bombs[i];
         bomb_p2 = game->players[1].bombs[i];
         if (bomb_p1.isActive || bomb_p2.isActive) {
-            if ((((int)bomb_p1.pos.x)/40 == x && ((int)bomb_p1.pos.y)/40 == y) || 
-                (((int)bomb_p2.pos.x)/40 == x && ((int)bomb_p2.pos.y)/40 == y)) {
+            if ((((int)bomb_p1.pos.x)/STD_SIZE == x && ((int)bomb_p1.pos.y)/STD_SIZE == y) || 
+                (((int)bomb_p2.pos.x)/STD_SIZE == x && ((int)bomb_p2.pos.y)/STD_SIZE == y)) {
                 return 1;
             }
         }
@@ -37,9 +37,9 @@ int tileHasBomb(Game* game, int x, int y) {
 }
 
 void initBomb(Game* game, Player player, Bomb* bomb) {
-    int x = player.pos.x + 16, y = player.pos.y + 16;
-    x = x/40 * 40 + 4;
-    y = y/40 * 40 + 4;
+    int x = player.pos.x + STD_SIZE_ENT/2, y = player.pos.y + STD_SIZE_ENT/2;
+    x = x/STD_SIZE * STD_SIZE + STD_SIZE_DIF;
+    y = y/STD_SIZE * STD_SIZE + STD_SIZE_DIF;
     bomb->pos = (Rectangle) {x, y, STD_SIZE_ENT, STD_SIZE_ENT};
     bomb->distance = player.bomb_distance;
     bomb->isActive = 1;
@@ -98,8 +98,8 @@ int colDestroyable(Game* game, Rectangle explosion) {
 }
 
 void placeBomb (Game* game, Player* player) {
-    int hero_tile_x = ((int)player->pos.x + STD_SIZE_ENT / 2) / 40;
-    int hero_tile_y = ((int)player->pos.y + STD_SIZE_ENT / 2) / 40;
+    int hero_tile_x = ((int)player->pos.x + STD_SIZE_ENT / 2) / STD_SIZE;
+    int hero_tile_y = ((int)player->pos.y + STD_SIZE_ENT / 2) / STD_SIZE;
     if (!tileHasBomb(game, (int)player->pos.x, (int)player->pos.y)) {
         for(int i = 0; i < player->num_bombs; i++){
             if(!player->bombs[i].isActive){

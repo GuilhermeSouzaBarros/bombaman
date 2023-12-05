@@ -20,6 +20,7 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
         }
     }
     player->vivo = 1;
+    player->sprite = LoadTexture("sprites/sans_spritesheet.png");
 }
 
 int updateMovement(Game* game, Player* player, float* cord, int speed) {
@@ -70,6 +71,7 @@ void updatePlayersPos(Game* game){
 }
 
 void colPucciPlayer(Game* game, Player* player, int p) {
+    if (game->time < 60) return; 
     if (CheckCollisionRecs(player->pos, *game->map.especial)) {
         game->map.pucci_pickup_steal_info[0] = player->speed - 2;
         game->map.pucci_pickup_steal_info[1] = player->num_bombs - 1;

@@ -5,12 +5,6 @@
 #ifndef MAPS
 #define MAPS
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define STD_SIZE 40
-#define STD_SIZE_ENT 32
-#define STD_SIZE_DIF 4
-
 int colExplosion (Bomb bombs[], int n, Rectangle target);
 int colPerBombaExplosion(Bomb* bomb, Game* game);
 int colBarrier(Map *map, Rectangle target);

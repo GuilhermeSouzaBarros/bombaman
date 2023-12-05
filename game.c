@@ -9,8 +9,12 @@
 
 Game* initGame(int map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
-    initPlayer(&g->players[0], p1_nome, GOLD, (Rectangle){44, 44, STD_SIZE_ENT, STD_SIZE_ENT});
-    initPlayer(&g->players[1], p2_nome, WHITE, (Rectangle){524, 524, STD_SIZE_ENT, STD_SIZE_ENT});
+    initPlayer(&g->players[0], p1_nome, GOLD,
+        (Rectangle){1 * STD_SIZE + STD_SIZE_DIF, 1 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
+    
+    initPlayer(&g->players[1], p2_nome, WHITE,
+        (Rectangle){13 * STD_SIZE + STD_SIZE_DIF, 13 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
+
     g->total_pickups = 0;
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
@@ -19,6 +23,7 @@ Game* initGame(int map, char* p1_nome, char* p2_nome){
 }
 
 void freeGame(Game* game) {
+    UnloadTexture(game->players[0].sprite);
     free(game->map.especial);
     free(game);
 }
@@ -88,10 +93,12 @@ void DrawGame(Game *game, Placar* placar) {
     draw_bomb(game->players[0].bombs, game->players[0].num_bombs);
     draw_bomb(game->players[1].bombs, game->players[1].num_bombs);
 
-    DrawRectangleRec(game->players[0].pos, game->players[0].color);
+    DrawTexturePro(game->players[0].sprite, (Rectangle){0, 1, 25, 30},
+                   (Rectangle){game->players[0].pos.x+3, game->players[0].pos.y, 30, 36},
+                   (Vector2){0, 0},
+                   0, WHITE);
     DrawRectangleRec(game->players[1].pos, game->players[1].color);
 
-    DrawText(game->players[0].nome, 630, 5, 30, game->players[0].color);
     DrawText(game->players[1].nome, 630, 40, 30, game->players[1].color);
 
     drawEspecials(game);
