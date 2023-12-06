@@ -103,9 +103,7 @@ void baseSetup(Game* game){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             map->barriers.barriers[i][j] = (Rectangle) {40*j, 40*i, 40, 40};
             map->barriers.types[i][j] = 0;
-            printf("%3d %3d  ", 40*j, 40*i);
         }
-        printf("\n\n");
     }
 
     int destructs = 0;
@@ -149,43 +147,47 @@ void baseSetup(Game* game){
     map->color = GRAY;
 }
 
-void map0Setup(Map* map) {
+void map0SpriteSetup(Map* map) {
     map->sprite = LoadTexture("sprites/hotlandSprites.png");
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
                 case 1:
-                    if (i == 0 && j == 0) {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){120, 0, 20, 20};
-                    } else if (i == 0 && j == 14) {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){180, 0, 20, 20};
-                    } else if (i == 14 && j == 0) {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){120, 60, 20, 20};
-                    } else if (i == 14 && j == 14) {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){180, 60, 20, 20};
+                    if (((i == 0 || i == 14) && j == 0)) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){0, 140, 20, 20};
+                    } else if ((i == 0 || i == 14) && j == 14) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){40, 140, 20, 20};
+                    } else if (i == 13 && j == 0) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){260, 60, 20, 20};
+                    } else if (i == 13 && j == 14) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){200, 60, 20, 20};
+                    } else if (i == 1 && j == 0) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){260, 0, 20, 20};
+                    } else if (i == 1 && j == 14) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){200, 0, 20, 20};
                     } else if (i == 0) {
-                        int random = 20 * !!(!(rand() % 3));
-                        random += 140;
-                        map->barriers.sprite_pos[i][j] = (Rectangle){random, 0, 20, 20};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){20, 140, 20, 20};
                     } else if (i == 14) {
-                        int random = 20 * !!(!(rand() % 3));
-                        random += 140;
-                        map->barriers.sprite_pos[i][j] = (Rectangle){random, 60, 20, 20};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){ 20, 140, 20, 20};
                     } else if (j == 0) {
                         int random = !!(!(rand() % 3));
                         random = 20 * (random + 1);
-                        map->barriers.sprite_pos[i][j] = (Rectangle){120, random, 20, 20};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){200, random, 20, 20};
                     } else if (j == 14) {
                         int random = !!(!(rand() % 3));
                         random = 20 * (random + 1);
-                        map->barriers.sprite_pos[i][j] = (Rectangle){180, random, 20, 20};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){260, random, 20, 20};
                     } else {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){207, 145, 26, 26};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){179, 241, 20, 20};
                     }
-                    break;
+                break;
             }
         }
     }
+}
+
+void map0Setup(Map* map) {
+    map0SpriteSetup(map);
     map->map_num = 0;
     Rectangle especiais[4];
     int n_rec = 2;
@@ -293,7 +295,6 @@ void drawMap0 (Map *map) {
             }
         }
     }
-    DrawRectangleLinesEx((Rectangle){39, 39, 522, 522}, 1, BLACK);
 }
 
 void draw_map(Map *map){

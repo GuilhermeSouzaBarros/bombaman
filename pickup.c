@@ -3,9 +3,9 @@
 void initPickup(Pickup* p, int x, int y) {
     static int type = 0;
     int actual_type = type / 2;
+    p->tile_y = y; 
     p->tile_x = x;
-    p->tile_y = y;
-    p->pos = (Rectangle){x*STD_SIZE + STD_SIZE_DIF, y * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
+    p->pos = (Rectangle){y*STD_SIZE + STD_SIZE_DIF, x * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
     if (actual_type == 0) {
         p->type = 0;
         p->color = BLUE;
