@@ -101,15 +101,17 @@ void baseSetup(Game* game){
     map->num_barriers_coln = 15;
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
-            map->barriers.barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
+            map->barriers.barriers[i][j] = (Rectangle) {40*j, 40*i, 40, 40};
             map->barriers.types[i][j] = 0;
+            printf("%3d %3d  ", 40*j, 40*i);
         }
+        printf("\n\n");
     }
+
     int destructs = 0;
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; i + j < map->num_barriers_coln; j++) {
             if (i == 7 && j == 7) continue;
-            map->barriers.barriers[i][j] = (Rectangle) {40*i, 40*j, 40, 40};
             if ((i == 0 || j == 0) || (i % 2 == 0 && j % 2 == 0)) {
                 map->barriers.types[i][j] = 1;
                 map->barriers.types[14-i][14-j] = 1;
@@ -147,7 +149,43 @@ void baseSetup(Game* game){
     map->color = GRAY;
 }
 
-void map0Especial(Map* map) {
+void map0Setup(Map* map) {
+    map->sprite = LoadTexture("sprites/hotlandSprites.png");
+    for (int i = 0; i < map->num_barriers_line; i++) {
+        for (int j = 0; j < map->num_barriers_coln; j++) {
+            switch(map->barriers.types[i][j]) {
+                case 1:
+                    if (i == 0 && j == 0) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){120, 0, 20, 20};
+                    } else if (i == 0 && j == 14) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){180, 0, 20, 20};
+                    } else if (i == 14 && j == 0) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){120, 60, 20, 20};
+                    } else if (i == 14 && j == 14) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){180, 60, 20, 20};
+                    } else if (i == 0) {
+                        int random = 20 * !!(!(rand() % 3));
+                        random += 140;
+                        map->barriers.sprite_pos[i][j] = (Rectangle){random, 0, 20, 20};
+                    } else if (i == 14) {
+                        int random = 20 * !!(!(rand() % 3));
+                        random += 140;
+                        map->barriers.sprite_pos[i][j] = (Rectangle){random, 60, 20, 20};
+                    } else if (j == 0) {
+                        int random = !!(!(rand() % 3));
+                        random = 20 * (random + 1);
+                        map->barriers.sprite_pos[i][j] = (Rectangle){120, random, 20, 20};
+                    } else if (j == 14) {
+                        int random = !!(!(rand() % 3));
+                        random = 20 * (random + 1);
+                        map->barriers.sprite_pos[i][j] = (Rectangle){180, random, 20, 20};
+                    } else {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){207, 145, 26, 26};
+                    }
+                    break;
+            }
+        }
+    }
     map->map_num = 0;
     Rectangle especiais[4];
     int n_rec = 2;
@@ -215,7 +253,7 @@ void updatePucci(Game* game) {
     }
 }
 
-void map1Especial(Map* map) {
+void map1Setup(Map* map) {
     map->especial = (Rectangle*)malloc(sizeof(Rectangle));
     *(map->especial) = (Rectangle){7*STD_SIZE + STD_SIZE_DIF, 7*STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
     map->n_especiais = 1;
@@ -230,15 +268,39 @@ void mapSetup(Game* game, int num_map) {
     baseSetup(game);
     switch (num_map) {
         case 0:
-            map0Especial(&game->map);
+            map0Setup(&game->map);
             break;
         case 1:
-            map1Especial(&game->map);
+            map1Setup(&game->map);
             break;
     }
 }
 
+void drawMap0 (Map *map) {
+    for(int i = 0; i < map->num_barriers_line; i++){
+        for (int j = 0; j < map->num_barriers_coln; j++) {
+            switch (map->barriers.types[i][j]) {
+                case 1:
+                    DrawTexturePro(map->sprite, map->barriers.sprite_pos[i][j],
+                    map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
+                    break;
+                case 2:
+                    DrawRectangleRec(map->barriers.barriers[i][j], BROWN);
+                    break;
+                case 3:
+                    DrawRectangleRec(map->barriers.barriers[i][j], DARKBROWN);
+                    break;
+            }
+        }
+    }
+    DrawRectangleLinesEx((Rectangle){39, 39, 522, 522}, 1, BLACK);
+}
+
 void draw_map(Map *map){
+    if (map->map_num == 0) { 
+        drawMap0(map);
+        return;
+    }
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch (map->barriers.types[i][j]) {

@@ -12,10 +12,12 @@
 typedef struct Barriers {
     Rectangle barriers[15][15];
     int types[15][15]; //| 0: Nothing | 1: Wall | 2: Destructible | 3: Pickup |
+    Rectangle sprite_pos[15][15];
 } Barriers;
 
 typedef struct Map {
     int map_num;
+    Texture2D sprite;
     Barriers barriers;
     Rectangle* especial;
     int n_especiais;

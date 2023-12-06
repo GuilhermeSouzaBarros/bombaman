@@ -39,7 +39,6 @@ int updateMovement(Game* game, Player* player, float* cord, int speed) {
         if (speed > 0) speed--;
         else speed++;
     }
-    printf("não ta andando tolo\n");
     return 0;
 }
 
