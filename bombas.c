@@ -29,8 +29,74 @@ void drawExplosionTexture(Texture2D* sprite, Bomb* bomb) {
         tempo_dif = 251;
         break;
     }
-    DrawTexturePro(*sprite, (Rectangle){sprite_dif * 2 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
-        bomb->pos, (Vector2){0, 0}, 0, WHITE);
+    int tiles = bomb->explosions[0].height / 40 - 1;
+    for (int i = 1; i <= tiles; i++) {
+            Rectangle target = bomb->explosions[0];
+            target.y += (i - 1) * STD_SIZE;
+            target.height = 40;
+        if (i == 1) {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 2 + tempo_dif, 0 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        } else {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 2 + tempo_dif, 1 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        }
+    }
+    tiles = bomb->explosions[1].width / 40 - 1;
+    for (int i = 1; i <= tiles; i++) {
+            Rectangle target = bomb->explosions[1];
+            target.x += (i - 1) * STD_SIZE;
+            target.width = 40;
+        if (i == 1) {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 0 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        } else {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 1 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        }
+    }
+    tiles = bomb->explosions[2].height / 40 - 1;
+    for (int i = 1; i <= tiles; i++) {
+            Rectangle target = bomb->explosions[2];
+            target.y += i * STD_SIZE;
+            target.height = 40;
+        if (i == tiles) {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 2 + tempo_dif, 4 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        } else {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 2 + tempo_dif, 3 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        }
+    }
+    tiles = bomb->explosions[3].width / 40 - 1;
+    for (int i = 1; i <= tiles; i++) {
+            Rectangle target = bomb->explosions[3];
+            target.x += i * STD_SIZE;
+            target.width = 40;
+        if (i == tiles) {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 4 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        } else {
+            DrawTexturePro(*sprite,
+            (Rectangle){sprite_dif * 3 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+            target, (Vector2){0, 0}, 0, WHITE);
+        }
+    }
+    Rectangle target = bomb->pos;
+    target.x -= STD_SIZE_DIF;
+    target.y -= STD_SIZE_DIF;
+    target.width = STD_SIZE;
+    target.height = STD_SIZE;
+    DrawTexturePro(*sprite,
+        (Rectangle){sprite_dif * 2 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+        target, (Vector2){0, 0}, 0, WHITE);
 }
 
 void draw_bomb(Player* player){
@@ -117,6 +183,17 @@ int colDestroyable(Game* game, Rectangle explosion) {
             if (game->map.barriers.types[i][j] == 2 || game->map.barriers.types[i][j] == 3) {
                 if(CheckCollisionRecs(explosion, game->map.barriers.barriers[i][j])){
                     game->map.barriers.types[i][j] = 0;
+                    if (i == 1) {
+                        game->map.barriers.sprite_pos[i][j] = (Rectangle){20, 80, 20, 20};
+                    }
+                    if (i == 13) {
+                        game->map.barriers.sprite_pos[i][j] = (Rectangle){20, 120, 20, 20};
+                    }
+                    for (int k = 0; k < game->total_pickups; k++) {
+                        if (game->pickups[k].tile_x == i && game->pickups[k].tile_y == j) {
+                            game->pickups[k].visible = 1;
+                        }
+                    }
                     return 1;
                 }
             }

@@ -30,6 +30,7 @@ typedef struct Map {
 
 typedef struct Pickup {
     Rectangle pos;
+    int visible;
     int tile_x;
     int tile_y;
     Color color;

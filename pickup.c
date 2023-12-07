@@ -1,10 +1,13 @@
 #include "pickup.h"
 
+#include <stdio.h>
+
 void initPickup(Pickup* p, int x, int y) {
+    p->visible = 0;
     static int type = 0;
     int actual_type = type / 2;
-    p->tile_y = y; 
     p->tile_x = x;
+    p->tile_y = y; 
     p->pos = (Rectangle){y*STD_SIZE + STD_SIZE_DIF, x * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
     if (actual_type == 0) {
         p->type = 0;
@@ -44,6 +47,8 @@ void colPlayerPickups(Game* game, Player* player) {
 
 void drawPickup(Pickup* pickups, int n) {
     for (int i = 0; i < n; i++) {
-        DrawRectangleRec(pickups[i].pos, pickups[i].color);
+        if (pickups[i].visible) {
+            DrawRectangleRec(pickups[i].pos, pickups[i].color);
+        }
     }
 }

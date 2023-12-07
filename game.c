@@ -87,9 +87,9 @@ void DrawGame(Game *game, Placar* placar) {
     BeginDrawing();
     ClearBackground((Color){181, 85, 21, 255});
 
-    drawPickup(game->pickups, game->total_pickups);
     draw_map(&game->map);
-    
+    drawPickup(game->pickups, game->total_pickups);
+
     draw_bomb(&game->players[0]);
     draw_bomb(&game->players[1]);
 

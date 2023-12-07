@@ -1,31 +1,6 @@
 f VS g
 Vitórias de f: 0
-Vitórias de g: 1
-Empates: 1
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS f
-Vitórias de f: 0
-Vitórias de f: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
+Vitórias de g: 2
 Empates: 0
 
 f VS g
