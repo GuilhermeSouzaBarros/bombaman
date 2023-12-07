@@ -45,10 +45,40 @@ void colPlayerPickups(Game* game, Player* player) {
     }
 }
 
-void drawPickup(Pickup* pickups, int n) {
+void drawPickup(Texture2D* sprite, Pickup* pickups, int n) {
     for (int i = 0; i < n; i++) {
         if (pickups[i].visible) {
-            DrawRectangleRec(pickups[i].pos, pickups[i].color);
+            int floating;
+            Rectangle target = pickups[i].pos;
+            switch (pickups[i].type) {
+                case 0:
+                    floating = (int)(10 * GetTime()) % 10;
+                    if (floating > 4) {
+                        floating = 10 - floating;
+                    }
+                    DrawTexturePro(*sprite, (Rectangle){0, 0, 320, 320}, target,
+                    (Vector2){0, floating}, 0, WHITE);
+                    break;
+                case 1:
+                    floating = (int)(3 + 10 * GetTime()) % 10;
+                    if (floating > 4) {
+                        floating = 10 - floating;
+                    }
+                    target.height = 22;
+                    DrawTexturePro(*sprite, (Rectangle){634, 0, 320, 180}, target,
+                    (Vector2){0, floating - 12}, 0, WHITE);
+                    break;
+                    break;
+                case 2:
+                    floating = (int)(6 + 10 * GetTime()) % 10;
+                    if (floating > 4) {
+                        floating = 10 - floating;
+                    }
+                    target.height = 48; 
+                    DrawTexturePro(*sprite, (Rectangle){420, 80, 120, 160}, target,
+                    (Vector2){0, 8 + floating}, 0, WHITE);
+                    break;
+            }
         }
     }
 }

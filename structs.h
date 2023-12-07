@@ -73,6 +73,7 @@ typedef struct Game {
     int total_pickups;
     double time;
     double start_time;
+    Texture2D pickups_sprite;
 } Game;
 
 typedef struct Menu {

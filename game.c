@@ -9,6 +9,7 @@
 
 Game* initGame(int map, char* p1_nome, char* p2_nome){
     Game* g = (Game*)malloc(sizeof(Game));
+    g->pickups_sprite = LoadTexture("sprites/pickups.png");
     initPlayer(&g->players[0], p1_nome, GOLD,
         (Rectangle){1 * STD_SIZE + STD_SIZE_DIF, 1 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
     
@@ -88,7 +89,7 @@ void DrawGame(Game *game, Placar* placar) {
     ClearBackground((Color){181, 85, 21, 255});
 
     draw_map(&game->map);
-    drawPickup(game->pickups, game->total_pickups);
+    drawPickup(&game->pickups_sprite, game->pickups, game->total_pickups);
 
     draw_bomb(&game->players[0]);
     draw_bomb(&game->players[1]);

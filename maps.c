@@ -215,12 +215,12 @@ void map0Setup(Map* map) {
     especiais[1] = (Rectangle){STD_SIZE * tile_y + 16, 0, 8, 15 * STD_SIZE};
 
     if (tile_x != 7) {
-        especiais[2] = (Rectangle){0, STD_SIZE * (14 - tile_x) + 16, 15 * STD_SIZE, 8};
+        especiais[n_rec] = (Rectangle){0, STD_SIZE * (14 - tile_x) + 16, 15 * STD_SIZE, 8};
         n_rec++;
     }
 
     if (tile_y != 7) {
-        especiais[3] = (Rectangle){STD_SIZE * (14 - tile_y) + 16, 0, 8, 15 * STD_SIZE};
+        especiais[n_rec] = (Rectangle){STD_SIZE * (14 - tile_y) + 16, 0, 8, 15 * STD_SIZE};
         n_rec++;
     }
 
@@ -343,7 +343,7 @@ void drawEspecials(Game* game) {
         case 0:
             for (int i = 0; i < game->map.n_especiais; i++) {
                 DrawRectangleRec(game->map.especial[i], (Color){255, 128, 0, 128});
-                if (!(i % 2)) {
+                if (game->map.especial[i].height == 8) {
                     DrawTexturePro(game->map.sprite, (Rectangle){280, 260, 40, 40},
                     (Rectangle){game->map.especial[i].x, game->map.especial[i].y - 16, 40, 40},
                     (Vector2){0, 0}, 0, WHITE);
