@@ -19,6 +19,11 @@ Game* initGame(int map, char* p1_nome, char* p2_nome){
     g->total_pickups = 0;
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
+
+    g->sounds[0] = LoadSound("sounds/explosion.mp3");
+    g->sounds[1] = LoadSound("sounds/click.mp3");
+    g->sounds[2] = LoadSound("sounds/bubble.mp3");
+
     mapSetup(g, map);
     return g;
 }

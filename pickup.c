@@ -40,6 +40,7 @@ void colPlayerPickups(Game* game, Player* player) {
             game->pickups[i] = game->pickups[game->total_pickups - 1]; 
             game->pickups[game->total_pickups-1].pos = (Rectangle){-40, -40, 0, 0}; 
             game->total_pickups -= 1;
+            PlaySound(game->sounds[2]);
             return;
         }
     }

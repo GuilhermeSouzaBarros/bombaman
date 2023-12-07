@@ -20,11 +20,11 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
         }
     }
     player->vivo = 1;
+    player->facing = 0;
+    player->is_moving = 0;
     player->sprite = LoadTexture("sprites/sans_spritesheet.png");
     player->sprite_bomb = LoadTexture("sprites/bob-omb sprite.png");
     player->sprite_explosion = LoadTexture("sprites/bomba_sprite.png");
-    player->facing = 0;
-    player->is_moving = 0;
 }
 
 int updateMovement(Game* game, Player* player, float* cord, int speed) {
@@ -52,12 +52,14 @@ void updatePlayersPos(Game* game){
     if (IsKeyDown(KEY_D)) vel_x += game->players[0].speed;
     vel_x = updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
     vel_y = updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
-    if (!(vel_x || vel_y) && game->map.map_num == 0) {
+    if (!(vel_x || vel_y)) {
         game->players[0].is_moving = 0;
-        vel_x = checkCollisionEspecialX(game, &game->players[0]);
-        vel_y = checkCollisionEspecialY(game, &game->players[0]);
-        updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
-        updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+        if (game->map.map_num == 0) {
+            vel_x = checkCollisionEspecialX(game, &game->players[0]);
+            vel_y = checkCollisionEspecialY(game, &game->players[0]);
+            updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
+            updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+        }
     } else {
         game->players[0].is_moving = 1;
         if (vel_y > 0) {

@@ -213,6 +213,7 @@ void placeBomb (Game* game, Player* player) {
         for(int i = 0; i < player->num_bombs; i++){
             if(!player->bombs[i].isActive){
                 initBomb(game, *player, &player->bombs[i]);
+                PlaySound(game->sounds[1]);
                 return;
             }
         }
@@ -225,6 +226,7 @@ void explodeBombs(Game* game, Player* player){
             Bomb* bomb = &player->bombs[i];
             if ((fabs(bomb->time - GetTime()) > 2 && fabs(bomb->time - GetTime()) < 3) || bomb->fastExplode){
                 if (bomb->isActiveFirstFrame) {
+                    PlaySound(game->sounds[0]);
                     for (int j = 0; j < 4; j++) {
                         bomb->explosions[j] = (Rectangle){bomb->pos.x - STD_SIZE_DIF, bomb->pos.y - STD_SIZE_DIF, STD_SIZE, STD_SIZE};
                         bomb->stop_explosion[j] = 0;
