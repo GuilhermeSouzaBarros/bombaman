@@ -4,14 +4,42 @@
 #include <math.h>
 #include <stdio.h>
 
-void draw_bomb(Bomb bombs[], int n){
-    for(int i = 0; i < n; i++){
-        if(bombs[i].isActive == 1){
-            for (int j = 0; j < 4; j++) {
-                DrawRectangleRec(bombs[i].explosions[j], RED);
-            }
-            if (bombs[i].isActiveFirstFrame) {
-                DrawRectangleRec(bombs[i].pos, BLACK);
+void drawBombTexture(Texture2D* sprite, Bomb* bomb) {
+    double bomb_time = GetTime() - bomb->time;
+    int bomb_frame = (int)(10 * (bomb_time)) % 8, sprite_x = 975, sprite_y = 1275;
+    bomb_time = (int)bomb_time;
+
+    DrawTexturePro(*sprite, (Rectangle){bomb_frame % 2 * sprite_x, bomb_time * sprite_y, sprite_x, sprite_y},
+    (Rectangle) {bomb->pos.x, bomb->pos.y - 8, 36, 48},
+    (Vector2){STD_SIZE_DIF, STD_SIZE_DIF}, 0, WHITE);
+}
+
+void drawExplosionTexture(Texture2D* sprite, Bomb* bomb) {
+    int sprite_size = 16, sprite_dif = 17;
+    int tempo_dif = (int)(4 * (GetTime() - bomb->time)) % 4;
+    switch (tempo_dif)
+    {
+    case 1:
+        tempo_dif = 82;
+        break;
+    case 2:
+        tempo_dif = 166;
+        break;
+    case 3:
+        tempo_dif = 251;
+        break;
+    }
+    DrawTexturePro(*sprite, (Rectangle){sprite_dif * 2 + tempo_dif, 2 * sprite_dif, sprite_size, sprite_size},
+        bomb->pos, (Vector2){0, 0}, 0, WHITE);
+}
+
+void draw_bomb(Player* player){
+    for(int i = 0; i < player->num_bombs; i++){
+        if(player->bombs[i].isActive == 1){
+            if (player->bombs[i].isActiveFirstFrame && !player->bombs[i].hasExploded) {
+                drawBombTexture(&player->sprite_bomb, &player->bombs[i]);
+            } else {
+                drawExplosionTexture(&player->sprite_explosion, &player->bombs[i]);
             }
         }
     }

@@ -90,8 +90,8 @@ void DrawGame(Game *game, Placar* placar) {
     drawPickup(game->pickups, game->total_pickups);
     draw_map(&game->map);
     
-    draw_bomb(game->players[0].bombs, game->players[0].num_bombs);
-    draw_bomb(game->players[1].bombs, game->players[1].num_bombs);
+    draw_bomb(&game->players[0]);
+    draw_bomb(&game->players[1]);
 
     drawPlayerSprite(game, &game->players[0]);
     DrawRectangleRec(game->players[1].pos, game->players[1].color);

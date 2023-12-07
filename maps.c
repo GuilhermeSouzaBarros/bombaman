@@ -152,6 +152,13 @@ void map0SpriteSetup(Map* map) {
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
+                case 0:
+                    if (i == 1) {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){20, 80, 20, 20};
+                    } else {
+                        map->barriers.sprite_pos[i][j] = (Rectangle){20, 100, 20, 20};
+                    }
+                    break;
                 case 1:
                     if (((i == 0 || i == 14) && j == 0)) {
                         map->barriers.sprite_pos[i][j] = (Rectangle){0, 140, 20, 20};
@@ -166,7 +173,7 @@ void map0SpriteSetup(Map* map) {
                     } else if (i == 1 && j == 14) {
                         map->barriers.sprite_pos[i][j] = (Rectangle){200, 0, 20, 20};
                     } else if (i == 0) {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){20, 140, 20, 20};
+                        map->barriers.sprite_pos[i][j] = (Rectangle){80, 140, 20, 20};
                     } else if (i == 14) {
                         map->barriers.sprite_pos[i][j] = (Rectangle){ 20, 140, 20, 20};
                     } else if (j == 0) {
@@ -282,6 +289,7 @@ void drawMap0 (Map *map) {
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch (map->barriers.types[i][j]) {
+                case 0:
                 case 1:
                     DrawTexturePro(map->sprite, map->barriers.sprite_pos[i][j],
                     map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);

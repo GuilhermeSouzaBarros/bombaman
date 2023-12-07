@@ -53,6 +53,8 @@ typedef struct Player {
     Rectangle pos;
     Color color;
     Texture2D sprite;
+    Texture2D sprite_bomb;
+    Texture2D sprite_explosion;
     int facing; // | 0: down | 1: left | 2: right | 3: up |
     int is_moving;
     char* nome;

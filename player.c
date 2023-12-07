@@ -21,6 +21,8 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
     }
     player->vivo = 1;
     player->sprite = LoadTexture("sprites/sans_spritesheet.png");
+    player->sprite_bomb = LoadTexture("sprites/bob-omb sprite.png");
+    player->sprite_explosion = LoadTexture("sprites/bomba_sprite.png");
     player->facing = 0;
     player->is_moving = 0;
 }
@@ -102,7 +104,7 @@ void colPucciPlayer(Game* game, Player* player, int p) {
 
 void drawPlayerSprite(Game* game, Player* player) {
     DrawTexturePro(player->sprite,
-                   (Rectangle){ 28 * (!(!player->is_moving)) * (((int)(((player->speed + 2) * game->time)) % 3 + 1)),
+                   (Rectangle){ 28 * (!(!player->is_moving)) * (((int)(((2 * player->speed + 6) * game->time)) % 3 + 1)),
                                 51 * player->facing + 1, 25, 30},
                    (Rectangle){player->pos.x + 2, player->pos.y, 30, 36},
                    (Vector2){0, 0},
