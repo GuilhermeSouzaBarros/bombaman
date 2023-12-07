@@ -158,7 +158,8 @@ void map0SpriteSetup(Map* map) {
                     } else if (i == 13) {
                         map->barriers.sprite_pos[i][j] = (Rectangle){20, 120, 20, 20};
                     } else {
-                        map->barriers.sprite_pos[i][j] = (Rectangle){20, 100, 20, 20};
+                        int random = 20 + !(rand() % 3) * 160;
+                        map->barriers.sprite_pos[i][j] = (Rectangle){random, 100, 20, 20};
                     }
                     break;
                 case 1:
@@ -189,7 +190,14 @@ void map0SpriteSetup(Map* map) {
                     } else {
                         map->barriers.sprite_pos[i][j] = (Rectangle){179, 241, 20, 20};
                     }
-                break;
+                    break;
+                case 2:
+                    int random = rand() % 2 * 20;
+                    map->barriers.sprite_pos[i][j] = (Rectangle){160 + random, 100 - random, 20, 20};
+                    break;
+                case 3:
+                    map->barriers.sprite_pos[i][j] = (Rectangle){240, 140, 120, 120};
+                    break;
             }
         }
     }
@@ -290,27 +298,16 @@ void mapSetup(Game* game, int num_map) {
 void drawMap0 (Map *map) {
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
-            switch (map->barriers.types[i][j]) {
-                case 0:
-                case 1:
-                    if (i == 1 && (j == 0 || j == 14)) {
-                        DrawTexturePro(map->sprite, (Rectangle){20, 80, 20, 20},
-                        map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
-                    }
-                    if (i == 13 && (j == 0 || j == 14)) {
-                        DrawTexturePro(map->sprite, (Rectangle){20, 120, 20, 20},
-                        map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
-                    }
-                    DrawTexturePro(map->sprite, map->barriers.sprite_pos[i][j],
-                    map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
-                    break;
-                case 2:
-                    DrawRectangleRec(map->barriers.barriers[i][j], BROWN);
-                    break;
-                case 3:
-                    DrawRectangleRec(map->barriers.barriers[i][j], DARKBROWN);
-                    break;
+            if (i == 1) {
+                DrawTexturePro(map->sprite, (Rectangle){20, 80, 20, 20},
+                map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
             }
+            if (i == 13) {
+                DrawTexturePro(map->sprite, (Rectangle){20, 120, 20, 20},
+                map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
+            }
+            DrawTexturePro(map->sprite, map->barriers.sprite_pos[i][j],
+            map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
         }
     }
 }
@@ -346,6 +343,15 @@ void drawEspecials(Game* game) {
         case 0:
             for (int i = 0; i < game->map.n_especiais; i++) {
                 DrawRectangleRec(game->map.especial[i], (Color){255, 128, 0, 128});
+                if (!(i % 2)) {
+                    DrawTexturePro(game->map.sprite, (Rectangle){280, 260, 40, 40},
+                    (Rectangle){game->map.especial[i].x, game->map.especial[i].y - 16, 40, 40},
+                    (Vector2){0, 0}, 0, WHITE);
+                } else {
+                    DrawTexturePro(game->map.sprite, (Rectangle){320, 260, 40, 40},
+                    (Rectangle){game->map.especial[i].x - 16, game->map.especial[i].y, 40, 40},
+                    (Vector2){0, 0}, 0, WHITE);
+                }
             }
             break;
         case 1:

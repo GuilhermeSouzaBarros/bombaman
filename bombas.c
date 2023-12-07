@@ -151,6 +151,7 @@ void colBombas(Game* game) {
             bomb = &game->players[0].bombs[i];
             if (colPerBombaExplosion(bomb, game)) {
                 bomb->fastExplode = 1;
+                bomb->time = GetTime() - 2;
                 break;
             }
         }
@@ -160,6 +161,7 @@ void colBombas(Game* game) {
             bomb = &game->players[1].bombs[i];
             if (colPerBombaExplosion(bomb, game)) {
                 bomb->fastExplode = 1;
+                bomb->time = GetTime() - 2;
                 break;
             }
         }
@@ -183,6 +185,8 @@ int colDestroyable(Game* game, Rectangle explosion) {
             if (game->map.barriers.types[i][j] == 2 || game->map.barriers.types[i][j] == 3) {
                 if(CheckCollisionRecs(explosion, game->map.barriers.barriers[i][j])){
                     game->map.barriers.types[i][j] = 0;
+                    int random = 20 + rand() % 2 * 160;
+                    game->map.barriers.sprite_pos[i][j] = (Rectangle){random, 100, 20, 20};
                     if (i == 1) {
                         game->map.barriers.sprite_pos[i][j] = (Rectangle){20, 80, 20, 20};
                     }
