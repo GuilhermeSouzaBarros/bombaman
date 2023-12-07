@@ -20,6 +20,11 @@ Game* initGame(int map, char* p1_nome, char* p2_nome){
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
 
+    if (map == 0) {
+        g->music = LoadSound("sounds/Undertale OST - Another Medium.mp3");
+    }
+    PlaySound(g->music);
+
     g->sounds[0] = LoadSound("sounds/explosion.mp3");
     g->sounds[1] = LoadSound("sounds/click.mp3");
     g->sounds[2] = LoadSound("sounds/bubble.mp3");

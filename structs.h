@@ -74,6 +74,7 @@ typedef struct Game {
     double time;
     double start_time;
     Texture2D pickups_sprite;
+    Sound music; 
     Sound sounds[3]; // 0: Explosion | 1: Click | 2: Bubble |
 } Game;
 
