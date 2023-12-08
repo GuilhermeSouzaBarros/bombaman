@@ -10,7 +10,7 @@ void drawBombTexture(Texture2D* sprite, Bomb* bomb) {
     bomb_time = (int)bomb_time;
 
     DrawTexturePro(*sprite, (Rectangle){bomb_frame % 2 * sprite_x, bomb_time * sprite_y, sprite_x, sprite_y},
-    (Rectangle) {bomb->pos.x, bomb->pos.y - 8, 36, 48},
+    (Rectangle) {bomb->pos.x + 4, bomb->pos.y - 8, 36, 48},
     (Vector2){STD_SIZE_DIF, STD_SIZE_DIF}, 0, WHITE);
 }
 
@@ -213,7 +213,7 @@ void placeBomb (Game* game, Player* player) {
         for(int i = 0; i < player->num_bombs; i++){
             if(!player->bombs[i].isActive){
                 initBomb(game, *player, &player->bombs[i]);
-                PlaySound(game->sounds[1]);
+                PlaySound(player->bombs[i].sounds[1]);
                 return;
             }
         }
@@ -226,7 +226,7 @@ void explodeBombs(Game* game, Player* player){
             Bomb* bomb = &player->bombs[i];
             if ((fabs(bomb->time - GetTime()) > 2 && fabs(bomb->time - GetTime()) < 3) || bomb->fastExplode){
                 if (bomb->isActiveFirstFrame) {
-                    PlaySound(game->sounds[0]);
+                    PlaySound(player->bombs[i].sounds[0]);
                     for (int j = 0; j < 4; j++) {
                         bomb->explosions[j] = (Rectangle){bomb->pos.x - STD_SIZE_DIF, bomb->pos.y - STD_SIZE_DIF, STD_SIZE, STD_SIZE};
                         bomb->stop_explosion[j] = 0;
@@ -294,7 +294,7 @@ void updateBombs(Game* game) {
     if(IsKeyPressed(KEY_SPACE)) {
         placeBomb(game, &game->players[0]);
     }
-    if(IsKeyPressed(KEY_ENTER)) {
+    if(IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
         placeBomb(game, &game->players[1]);
     }
     colBombas(game);

@@ -48,6 +48,7 @@ typedef struct Bomb{
     double time;
     int hasColision;
     int fastExplode;
+    Sound sounds[2]; // 0: Explosion | 1: Click 
 }Bomb;
 
 typedef struct Player {
@@ -73,12 +74,15 @@ typedef struct Game {
     int total_pickups;
     double time;
     double start_time;
+    Font* font;
     Texture2D pickups_sprite;
-    Sound music; 
-    Sound sounds[3]; // 0: Explosion | 1: Click | 2: Bubble |
+    Music music; 
+    Sound sounds[3]; // 0: Explosion | 1: Click | 2: Bubble
 } Game;
 
 typedef struct Menu {
+    Texture2D background;
+    Font* font;
     int screen;
     int game_start;
     int text_input_1;
@@ -91,6 +95,8 @@ typedef struct Menu {
 } Menu;
 
 typedef struct EndMenu {
+    Font* font;
+    Music music;
     char p1_nome[10];
     char p2_nome[10];
     int winner; // | 0: Draw |

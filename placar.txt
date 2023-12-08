@@ -1,0 +1,95 @@
+f VS g
+Vitórias de f: 1
+Vitórias de g: 0
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 0
+Empates: 1
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 1
+Vitórias de g: 0
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 4
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS ggg
+Vitórias de f: 0
+Vitórias de ggg: 2
+Empates: 0
+
+f VS g
+Vitórias de f: 2
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 0
+Empates: 1
+

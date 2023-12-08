@@ -4,8 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-Menu* initMenu(Placar* placar) {
+Menu* initMenu(Placar* placar, Font* font) {
     Menu* menu = (Menu*)malloc(sizeof(Menu));
+    menu->background = LoadTexture("images/hotlands.png");
     menu->text_input_1 = 0;
     menu->text_input_2 = 0;
     menu->p1_nome    = placar->p1_nome;
@@ -15,16 +16,25 @@ Menu* initMenu(Placar* placar) {
     menu->screen     = placar->rematch;
     menu->game_start = 0;
     menu->map = 0;
+    menu->font = font;
     return menu;
 }
 
-EndMenu* initEndMenu(Game* game, Placar* placar) {
+void freeMenu(Menu* menu) {
+    UnloadTexture(menu->background);
+    free(menu);
+}
+
+EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
     EndMenu* endmenu = (EndMenu*)malloc(sizeof(EndMenu));
     endmenu->num_map = game->map.map_num;
     strcpy(endmenu->p1_nome, game->players[0].nome);
     strcpy(endmenu->p2_nome, game->players[1].nome);
     if (!WindowShouldClose()) {
         if (game->players[0].vivo) {
+            endmenu->music = LoadMusicStream("sounds/sans.mp3");
+            SetMusicVolume(endmenu->music, 0.6);
+            PlayMusicStream(endmenu->music);
             placar->p1_wins++;
             endmenu->winner = 1;
             endmenu->winner_color = game->players[0].color;
@@ -42,6 +52,11 @@ EndMenu* initEndMenu(Game* game, Placar* placar) {
     return endmenu;
 }
 
+void freeEndMenu(EndMenu* endmenu) {
+    UnloadMusicStream(endmenu->music);
+    free(endmenu);
+}
+
 int clickRec(Rectangle rec) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
         CheckCollisionPointRec(GetMousePosition(), rec)) {
@@ -51,15 +66,31 @@ int clickRec(Rectangle rec) {
 }
 
 void updateScreen0(Menu* menu) {
+    BeginDrawing();
+    DrawTexturePro(menu->background, (Rectangle){ 0, 0, 1200, 900},
+        (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+    DrawRectangleRec((Rectangle){200, 450, 400, 60}, RED);
+
+    Vector2 size = MeasureTextEx(*menu->font, "SUPER", 50, 5);
+    DrawRectangle(224 - size.x/2, 100 - size.y/2, size.x + 8, size.y, (Color){0, 0, 0, 192});
+    DrawTextEx(*menu->font, "SUPER", (Vector2){228 - size.x / 2, 100 - size.y / 2}, 50, 5, (Color){80, 220, 220, 255});
+
+    size = MeasureTextEx(*menu->font, "BOMBA", 150, 15);
+    DrawRectangle(395 - size.x/2, 195 - size.y/2, size.x + 16, size.y - 23, (Color){0, 0, 0, 192});
+    DrawTextEx(*menu->font, "BOMBA", (Vector2){400 - size.x / 2, 190 - size.y / 2}, 150, 15, GOLD);
+
+    size = MeasureTextEx(*menu->font, "MAN", 150, 15);
+    DrawRectangle(500 - size.x/2, 320 - size.y/2, size.x + 16, size.y - 19, (Color){0, 0, 0, 192});
+    DrawTextEx(*menu->font, "MAN", (Vector2){505 - size.x / 2, 320 - size.y / 2}, 150, 15, GOLD);
+
+    DrawTextEx(*menu->font, "START BOMBA", (Vector2){220, 455}, 50, 5, WHITE);
+
+    EndDrawing();
+
     if (clickRec((Rectangle){200, 450, 400, 60})) {
         menu->screen = 1;
         return;
     }
-    BeginDrawing();
-    ClearBackground(DARKGRAY);
-    DrawRectangleRec((Rectangle){200, 450, 400, 60}, RED);
-    DrawText("START BOMBA", 206, 455, 50, BLACK);
-    EndDrawing();
 }
 
 void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
@@ -83,29 +114,6 @@ void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
 }
 
 void updateScreen1(Menu *menu, Placar* placar) {
-    if (clickRec((Rectangle){75, 150, 300, 50})) {
-        menu->text_input_1 = 1;
-    }
-    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1);
-    if (clickRec((Rectangle){425, 150, 300, 50})) {
-        menu->text_input_2 = 1;
-    }
-    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2);
-    if (clickRec((Rectangle){588, 513, 200, 75}) && menu->p1_qletras && menu->p2_qletras) {
-        menu->game_start = 1;
-        return;
-    }
-
-    if (clickRec((Rectangle){100, 250, 250, 150})) {
-        menu->map = 0;
-        placar->next_map = 0;
-    }
-
-    if (clickRec((Rectangle){450, 250, 250, 150})) {
-        menu->map = 1;
-        placar->next_map = 1;
-    }
-
     BeginDrawing();
     ClearBackground(DARKGRAY);
     
@@ -133,6 +141,29 @@ void updateScreen1(Menu *menu, Placar* placar) {
         DrawRectangleRec((Rectangle){588, 513, 200, 75}, GRAY);
     }
     EndDrawing();
+
+    if (clickRec((Rectangle){75, 150, 300, 50})) {
+        menu->text_input_1 = 1;
+    }
+    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1);
+    if (clickRec((Rectangle){425, 150, 300, 50})) {
+        menu->text_input_2 = 1;
+    }
+    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2);
+    if (clickRec((Rectangle){588, 513, 200, 75}) && menu->p1_qletras && menu->p2_qletras) {
+        menu->game_start = 1;
+        return;
+    }
+
+    if (clickRec((Rectangle){100, 250, 250, 150})) {
+        menu->map = 0;
+        placar->next_map = 0;
+    }
+
+    if (clickRec((Rectangle){450, 250, 250, 150})) {
+        menu->map = 1;
+        placar->next_map = 1;
+    }
 }
 
 void menuLoop(Menu* menu, Placar* placar) {
@@ -160,19 +191,7 @@ void atualizaPlacar(EndMenu* endmenu, Placar* placar) {
 }
 
 void endMenuLoop(EndMenu* endmenu, Placar* placar) {
-    if (clickRec((Rectangle){75, 400, 300, 100})) {
-        placar->rematch = 1;
-        placar->next_map = !endmenu->num_map;
-        endmenu->exit = 1;
-        return;
-    }
-
-    if ((WindowShouldClose() || clickRec((Rectangle){425, 400, 300, 100})) &&
-        (placar->p1_wins || placar->p2_wins || placar->draws)) {
-        atualizaPlacar(endmenu, placar);
-        return;
-    }
-
+    UpdateMusicStream(endmenu->music);
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
@@ -197,4 +216,17 @@ void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     DrawText("Start Menu", 575 - (MeasureText("Start Menu", 50)/2), 425, 50, BLACK);
 
     EndDrawing();
+
+    if (clickRec((Rectangle){75, 400, 300, 100})) {
+        placar->rematch = 1;
+        placar->next_map = !endmenu->num_map;
+        endmenu->exit = 1;
+        return;
+    }
+
+    if ((WindowShouldClose() || clickRec((Rectangle){425, 400, 300, 100})) &&
+        (placar->p1_wins || placar->p2_wins || placar->draws)) {
+        atualizaPlacar(endmenu, placar);
+        return;
+    }
 }

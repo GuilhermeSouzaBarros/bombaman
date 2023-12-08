@@ -6,8 +6,12 @@
 #ifndef MENU
 #define MENU
 
-Menu* initMenu(Placar* placar);
-EndMenu* initEndMenu(Game* game, Placar* placar);
+Menu* initMenu(Placar* placar, Font* font);
+void freeMenu(Menu* menu);
+
+EndMenu* initEndMenu(Game* game, Placar* placar, Font* font);
+void freeEndMenu(EndMenu* endmenu);
+
 void menuLoop(Menu* menu, Placar* placar);
 void endMenuLoop(EndMenu* endmenu, Placar* placar);
 

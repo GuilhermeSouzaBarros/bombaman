@@ -7,39 +7,56 @@
 #include "stdlib.h"
 #include "math.h"
 
-Game* initGame(int map, char* p1_nome, char* p2_nome){
+Game* initGame(int map, char* p1_nome, char* p2_nome, Font* font){
     Game* g = (Game*)malloc(sizeof(Game));
     g->pickups_sprite = LoadTexture("sprites/pickups.png");
-    initPlayer(&g->players[0], p1_nome, GOLD,
-        (Rectangle){1 * STD_SIZE + STD_SIZE_DIF, 1 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
-    
-    initPlayer(&g->players[1], p2_nome, WHITE,
-        (Rectangle){13 * STD_SIZE + STD_SIZE_DIF, 13 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
-
     g->total_pickups = 0;
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
 
-    if (map == 0) {
-        g->music = LoadSound("sounds/Undertale OST - Another Medium.mp3");
-    }
-    PlaySound(g->music);
+    g->music = LoadMusicStream("sounds/Undertale OST - Another Medium.mp3");
+    SetMusicVolume(g->music, 0.6);
+    SeekMusicStream(g->music, 105);
+    PlayMusicStream(g->music);
 
     g->sounds[0] = LoadSound("sounds/explosion.mp3");
     g->sounds[1] = LoadSound("sounds/click.mp3");
     g->sounds[2] = LoadSound("sounds/bubble.mp3");
 
+    initPlayer(g, &g->players[0], p1_nome, WHITE,
+        (Rectangle){1 * STD_SIZE + STD_SIZE_DIF, 1 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
+    
+    initPlayer(g, &g->players[1], p2_nome, BLACK,
+        (Rectangle){13 * STD_SIZE + STD_SIZE_DIF, 13 * STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT});
+
+
     mapSetup(g, map);
+    g->font = font;
     return g;
 }
 
 void freeGame(Game* game) {
-    UnloadTexture(game->players[0].sprite);
+    for (int i = 0; i < 2; i++) {
+        UnloadTexture(game->players[i].sprite);
+        UnloadTexture(game->players[i].sprite_bomb);
+        UnloadTexture(game->players[i].sprite_explosion);
+        for (int j = 0; j < 5; j++) {
+            for (int k = 0; k < 2; k++) {
+                UnloadSoundAlias(game->players[i].bombs[j].sounds[k]);
+            }
+        }
+    }
+    UnloadTexture(game->pickups_sprite);
+    UnloadMusicStream(game->music);
+    for (int i = 0; i < 3; i++) {
+        UnloadSound(game->sounds[i]);
+    }
     free(game->map.especial);
     free(game);
 }
 
 void updateGame(Game* game) {
+    UpdateMusicStream(game->music);
     game->time = GetTime() - game->start_time;
 
     if (game->time < 120) {
@@ -80,7 +97,6 @@ void updateGame(Game* game) {
             if (!game->map.pucci_pickup_steal_info[3]) colPucciPlayer(game, &game->players[1], 1);
             break;
     }
-
     colPlayerPickups(game, &game->players[0]);
     colPlayerPickups(game, &game->players[1]);
     updateBombs(game);

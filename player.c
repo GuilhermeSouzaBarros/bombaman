@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
+void initPlayer(Game* game, Player* player, char* nome, Color color, Rectangle pos) {
     player->pos = pos;
     player->color = color;
     player->nome = nome;
@@ -17,6 +17,9 @@ void initPlayer(Player* player, char* nome, Color color, Rectangle pos) {
         for (int j = 0; j < 4; j++) {
             player->bombs[i].explosions[j] = (Rectangle){0, 0, 0, 0};
             player->bombs[i].stop_explosion[j] = 0;
+        }
+        for (int j = 0; j < 2; j++) {
+            player->bombs[i].sounds[j] = LoadSoundAlias(game->sounds[j]);
         }
     }
     player->vivo = 1;
@@ -75,10 +78,10 @@ void updatePlayersPos(Game* game){
     }
 
     vel_x = 0, vel_y = 0;
-    if (IsKeyDown(KEY_I)) vel_y -= game->players[1].speed;
-    if (IsKeyDown(KEY_J)) vel_x -= game->players[1].speed;
-    if (IsKeyDown(KEY_K)) vel_y += game->players[1].speed;
-    if (IsKeyDown(KEY_L)) vel_x += game->players[1].speed;
+    if (IsKeyDown(KEY_I) || IsKeyDown(KEY_UP))    vel_y -= game->players[1].speed;
+    if (IsKeyDown(KEY_J) || IsKeyDown(KEY_LEFT))  vel_x -= game->players[1].speed;
+    if (IsKeyDown(KEY_K) || IsKeyDown(KEY_DOWN))  vel_y += game->players[1].speed;
+    if (IsKeyDown(KEY_L) || IsKeyDown(KEY_RIGHT)) vel_x += game->players[1].speed;
     vel_x = updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
     vel_y = updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
     if (!(vel_x || vel_y) && game->map.map_num == 0) {
