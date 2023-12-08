@@ -148,7 +148,8 @@ void baseSetup(Game* game){
 }
 
 void map0SpriteSetup(Map* map) {
-    map->sprite = LoadTexture("sprites/hotlandSprites.png");
+    map->sprite = (Texture2D*)malloc(sizeof(Texture2D));
+    map->sprite[0] = LoadTexture("sprites/hotlandSprites.png");
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
@@ -272,7 +273,30 @@ void updatePucci(Game* game) {
     }
 }
 
+void map1SpriteSetup(Map* map) {
+    map->sprite = (Texture2D*)malloc(sizeof(Texture2D) * 2);
+    map->sprite[0] = LoadTexture("images/Cathedral.png");
+    map->sprite[1] = LoadTexture("sprites/cathedral.png");
+    for (int i = 0; i < map->num_barriers_line; i++) {
+        for (int j = 0; j < map->num_barriers_coln; j++) {
+            switch(map->barriers.types[i][j]) {
+                case 1:
+                    map->barriers.sprite_pos[i][j] = (Rectangle){97, 0, 46, 83};
+                    break;
+                case 2:
+                    int random = rand() % 2;
+                    map->barriers.sprite_pos[i][j] = (Rectangle){random * 50, 0, 50 - 3 * random, 50 - 2*random};
+                    break;
+                case 3:
+                    map->barriers.sprite_pos[i][j] = (Rectangle){0, 50, 36, 37};
+                    break;
+            }
+        }
+    }
+}
+
 void map1Setup(Map* map) {
+    map1SpriteSetup(map);
     map->especial = (Rectangle*)malloc(sizeof(Rectangle));
     *(map->especial) = (Rectangle){7*STD_SIZE + STD_SIZE_DIF, 7*STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
     map->n_especiais = 1;
@@ -299,17 +323,29 @@ void drawMap0 (Map *map) {
     for(int i = 0; i < map->num_barriers_line; i++){
         for (int j = 0; j < map->num_barriers_coln; j++) {
             if (i == 1) {
-                DrawTexturePro(map->sprite, (Rectangle){20, 80, 20, 20},
+                DrawTexturePro(map->sprite[0], (Rectangle){20, 80, 20, 20},
                 map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
             }
             if (i == 13) {
-                DrawTexturePro(map->sprite, (Rectangle){20, 120, 20, 20},
+                DrawTexturePro(map->sprite[0], (Rectangle){20, 120, 20, 20},
                 map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
             }
-            DrawTexturePro(map->sprite, map->barriers.sprite_pos[i][j],
+            DrawTexturePro(map->sprite[0], map->barriers.sprite_pos[i][j],
             map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
         }
     }
+}
+
+void drawMap1(Map* map) {
+    DrawTexturePro(map->sprite[0], (Rectangle){24, 41, 402, 261}, (Rectangle){0, 0, 600, 600},
+                   (Vector2){0, 0}, 0, WHITE);
+    for(int i = 1; i < map->num_barriers_line - 1; i++){
+        for (int j = 1; j < map->num_barriers_coln - 1; j++) {
+            DrawTexturePro(map->sprite[1], map->barriers.sprite_pos[i][j],
+            map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
+        }
+    }
+
 }
 
 void draw_map(Map *map){
@@ -317,25 +353,7 @@ void draw_map(Map *map){
         drawMap0(map);
         return;
     }
-    for(int i = 0; i < map->num_barriers_line; i++){
-        for (int j = 0; j < map->num_barriers_coln; j++) {
-            switch (map->barriers.types[i][j]) {
-                case 1:
-                    DrawRectangleRec(map->barriers.barriers[i][j], map->color);
-                    if (i != 0 && i != 14 && j != 0 && j != 14) {
-                        DrawRectangleLinesEx(map->barriers.barriers[i][j], 1, BLACK);
-                    }
-                    break;
-                case 2:
-                    DrawRectangleRec(map->barriers.barriers[i][j], BROWN);
-                    break;
-                case 3:
-                    DrawRectangleRec(map->barriers.barriers[i][j], DARKBROWN);
-                    break;
-            }
-        }
-    }
-    DrawRectangleLinesEx((Rectangle){39, 39, 522, 522}, 1, BLACK);
+    drawMap1(map);
 }
 
 void drawEspecials(Game* game) {
@@ -344,11 +362,11 @@ void drawEspecials(Game* game) {
             for (int i = 0; i < game->map.n_especiais; i++) {
                 DrawRectangleRec(game->map.especial[i], (Color){255, 128, 0, 128});
                 if (game->map.especial[i].height == 8) {
-                    DrawTexturePro(game->map.sprite, (Rectangle){280, 260, 40, 40},
+                    DrawTexturePro(game->map.sprite[0], (Rectangle){280, 260, 40, 40},
                     (Rectangle){game->map.especial[i].x, game->map.especial[i].y - 16, 40, 40},
                     (Vector2){0, 0}, 0, WHITE);
                 } else {
-                    DrawTexturePro(game->map.sprite, (Rectangle){320, 260, 40, 40},
+                    DrawTexturePro(game->map.sprite[0], (Rectangle){320, 260, 40, 40},
                     (Rectangle){game->map.especial[i].x - 16, game->map.especial[i].y, 40, 40},
                     (Vector2){0, 0}, 0, WHITE);
                 }

@@ -15,9 +15,18 @@ typedef struct Barriers {
     Rectangle sprite_pos[15][15];
 } Barriers;
 
+typedef struct Sprite {
+    Texture2D self;
+    int x_dif;
+    int y_dif;
+    int x_size;
+    int y_size;
+    Vector2 offset;
+} Sprite;
+
 typedef struct Map {
     int map_num;
-    Texture2D sprite;
+    Texture2D* sprite;
     Barriers barriers;
     Rectangle* especial;
     int n_especiais;
@@ -54,7 +63,7 @@ typedef struct Bomb{
 typedef struct Player {
     Rectangle pos;
     Color color;
-    Texture2D sprite;
+    Sprite sprite;
     Texture2D sprite_bomb;
     Texture2D sprite_explosion;
     int facing; // | 0: down | 1: left | 2: right | 3: up |

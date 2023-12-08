@@ -193,6 +193,9 @@ int colDestroyable(Game* game, Rectangle explosion) {
                     if (i == 13) {
                         game->map.barriers.sprite_pos[i][j] = (Rectangle){20, 120, 20, 20};
                     }
+                    if (game->map.map_num == 1) {
+                        game->map.barriers.sprite_pos[i][j] = (Rectangle){0, 0, 0, 0};
+                    }
                     for (int k = 0; k < game->total_pickups; k++) {
                         if (game->pickups[k].tile_x == i && game->pickups[k].tile_y == j) {
                             game->pickups[k].visible = 1;

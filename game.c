@@ -37,7 +37,7 @@ Game* initGame(int map, char* p1_nome, char* p2_nome, Font* font){
 
 void freeGame(Game* game) {
     for (int i = 0; i < 2; i++) {
-        UnloadTexture(game->players[i].sprite);
+        UnloadTexture(game->players[i].sprite.self);
         UnloadTexture(game->players[i].sprite_bomb);
         UnloadTexture(game->players[i].sprite_explosion);
         for (int j = 0; j < 5; j++) {
@@ -51,6 +51,10 @@ void freeGame(Game* game) {
     for (int i = 0; i < 3; i++) {
         UnloadSound(game->sounds[i]);
     }
+    for (int i = 0; i < 1 + game->map.map_num; i++) {
+        UnloadTexture(game->map.sprite[i]);
+    }
+    free(game->map.sprite);
     free(game->map.especial);
     free(game);
 }
@@ -121,7 +125,7 @@ void DrawGame(Game *game, Placar* placar) {
     draw_bomb(&game->players[1]);
 
     drawPlayerSprite(game, &game->players[0]);
-    DrawRectangleRec(game->players[1].pos, game->players[1].color);
+    drawPlayerSprite(game, &game->players[1]);
 
     DrawText(game->players[0].nome, 640, 10, 30, game->players[0].color);
     DrawText(game->players[1].nome, 630, 40, 30, game->players[1].color);

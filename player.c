@@ -25,7 +25,21 @@ void initPlayer(Game* game, Player* player, char* nome, Color color, Rectangle p
     player->vivo = 1;
     player->facing = 0;
     player->is_moving = 0;
-    player->sprite = LoadTexture("sprites/sans_spritesheet.png");
+    if (player == &game->players[0]) {
+        player->sprite.self = LoadTexture("sprites/sans_spritesheet.png");
+        player->sprite.x_dif = 28;
+        player->sprite.y_dif = 51;
+        player->sprite.x_size = 25;
+        player->sprite.y_size = 30;
+        player->sprite.offset = (Vector2){-3, 0};
+    } else {
+        player->sprite.self = LoadTexture("sprites/isaac_spritesheet.png");
+        player->sprite.x_dif = 30;
+        player->sprite.y_dif = 36;
+        player->sprite.x_size = 30;
+        player->sprite.y_size = 36;
+        player->sprite.offset = (Vector2){-3, 3};
+    }
     player->sprite_bomb = LoadTexture("sprites/bob-omb sprite.png");
     player->sprite_explosion = LoadTexture("sprites/bomba_sprite.png");
 }
@@ -84,11 +98,26 @@ void updatePlayersPos(Game* game){
     if (IsKeyDown(KEY_L) || IsKeyDown(KEY_RIGHT)) vel_x += game->players[1].speed;
     vel_x = updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
     vel_y = updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
-    if (!(vel_x || vel_y) && game->map.map_num == 0) {
-        vel_x = checkCollisionEspecialX(game, &game->players[1]);
-        vel_y = checkCollisionEspecialY(game, &game->players[1]);
-        updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
-        updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+    if (!(vel_x || vel_y)) {
+        game->players[1].is_moving = 0;
+        if (game->map.map_num == 0) {
+            vel_x = checkCollisionEspecialX(game, &game->players[1]);
+            vel_y = checkCollisionEspecialY(game, &game->players[1]);
+            updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
+            updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+        }
+    } else {
+        game->players[1].is_moving = 1;
+        if (vel_y > 0) {
+            game->players[1].facing = 0;
+        } else if (vel_y < 0) {
+            game->players[1].facing = 3;
+        }
+        if (vel_x > 0) {
+            game->players[1].facing = 2;
+        } else if (vel_x < 0) {
+            game->players[1].facing = 1;
+        }
     }
 }
 
@@ -108,10 +137,10 @@ void colPucciPlayer(Game* game, Player* player, int p) {
 }
 
 void drawPlayerSprite(Game* game, Player* player) {
-    DrawTexturePro(player->sprite,
-                   (Rectangle){ 28 * (!(!player->is_moving)) * (((int)(((2 * player->speed + 6) * game->time)) % 3 + 1)),
-                                51 * player->facing + 1, 25, 30},
-                   (Rectangle){player->pos.x + 2, player->pos.y, 30, 36},
-                   (Vector2){0, 0},
+    DrawTexturePro(player->sprite.self,
+                   (Rectangle){player->sprite.x_dif * player->is_moving * (((int)(((2 * player->speed) * game->time)) % 4)),
+                               player->sprite.y_dif * player->facing, player->sprite.x_size, player->sprite.y_size},
+                   (Rectangle){player->pos.x, player->pos.y, 30, 36},
+                   player->sprite.offset,
                    0, WHITE);
 }
