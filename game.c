@@ -99,10 +99,14 @@ void updateGame(Game* game) {
                 game->players[p_indice].bomb_distance += game->map.delirium_pickup_steal_info[2];
                 game->map.delirium_pickup_steal_info[3] = 0;
             } 
+            game->map.stun_delirium = 0;
+            if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, *game->map.especial) ||
+                colExplosion(game->players[1].bombs, game->players[1].num_bombs, *game->map.especial)) {
+                game->map.stun_delirium = 1;
+            }
             if (!game->map.delirium_pickup_steal_info[3]) {
-                game->map.stun_delirium = 0;
-                updateDelirium(game);
                 colDeliriumPlayer(game, &game->players[0], 0);
+                updateDelirium(game);
             }
             if (!game->map.delirium_pickup_steal_info[3]) colDeliriumPlayer(game, &game->players[1], 1);
             break;

@@ -198,3 +198,18 @@ Vitórias de f: 0
 Vitórias de g: 2
 Empates: 0
 
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 2
+Empates: 0
+
