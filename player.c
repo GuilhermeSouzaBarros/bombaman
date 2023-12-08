@@ -121,18 +121,18 @@ void updatePlayersPos(Game* game){
     }
 }
 
-void colPucciPlayer(Game* game, Player* player, int p) {
+void colDeliriumPlayer(Game* game, Player* player, int p) {
     if (game->time < 60) return; 
     if (CheckCollisionRecs(player->pos, *game->map.especial)) {
-        game->map.pucci_pickup_steal_info[0] = player->speed - 2;
-        game->map.pucci_pickup_steal_info[1] = player->num_bombs - 1;
-        game->map.pucci_pickup_steal_info[2] = player->bomb_distance - 1;
-        game->map.pucci_pickup_steal_info[3] = 1;
-        game->map.pucci_pickup_steal_info[4] = p;
+        game->map.delirium_pickup_steal_info[0] = player->speed - 2;
+        game->map.delirium_pickup_steal_info[1] = player->num_bombs - 1;
+        game->map.delirium_pickup_steal_info[2] = player->bomb_distance - 1;
+        game->map.delirium_pickup_steal_info[3] = 1;
+        game->map.delirium_pickup_steal_info[4] = p;
         player->speed = 2;
         player->num_bombs = 1;
         player->bomb_distance = 1;
-        game->map.pucci_steal_time = GetTime();
+        game->map.delirium_steal_time = GetTime();
     }
 }
 

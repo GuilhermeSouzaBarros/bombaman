@@ -30,8 +30,9 @@ typedef struct Map {
     Barriers barriers;
     Rectangle* especial;
     int n_especiais;
-    int pucci_pickup_steal_info[5];
-    double pucci_steal_time;
+    int delirium_pickup_steal_info[5]; //| 0: speed | 1: Num_bombs | 2: Range | 3: ifStole | 4: IDPlayerStolen
+    double delirium_steal_time;
+    int stun_delirium;
     int num_barriers_line;
     int num_barriers_coln;
     Color color;

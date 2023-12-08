@@ -14,6 +14,6 @@ int checkCollisionEspecialY(Game* game, Player* player);
 void mapSetup(Game* game, int num_map);
 void draw_map(Map *map);
 void drawEspecials(Game* game);
-void updatePucci(Game* game); // map 1
+void updateDelirium(Game* game); // map 1
 
 #endif

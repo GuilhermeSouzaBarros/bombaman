@@ -14,9 +14,14 @@ Game* initGame(int map, char* p1_nome, char* p2_nome, Font* font){
     g->start_time = GetTime();
     g->time = g->start_time - GetTime();
 
-    g->music = LoadMusicStream("sounds/Undertale OST - Another Medium.mp3");
-    SetMusicVolume(g->music, 0.6);
-    SeekMusicStream(g->music, 105);
+    if (map == 0) {
+        g->music = LoadMusicStream("sounds/Undertale OST - Another Medium.mp3");
+        SeekMusicStream(g->music, 105);
+        SetMusicVolume(g->music, 0.6);
+    } else {
+        g->music = LoadMusicStream("sounds/cathedral.mp3");
+        SetMusicVolume(g->music, 0.8);
+    }
     PlayMusicStream(g->music);
 
     g->sounds[0] = LoadSound("sounds/explosion.mp3");
@@ -51,7 +56,7 @@ void freeGame(Game* game) {
     for (int i = 0; i < 3; i++) {
         UnloadSound(game->sounds[i]);
     }
-    for (int i = 0; i < 1 + game->map.map_num; i++) {
+    for (int i = 0; i < 1 + 2 * game->map.map_num; i++) { // map 0: 0, map 1: 3
         UnloadTexture(game->map.sprite[i]);
     }
     free(game->map.sprite);
@@ -86,19 +91,20 @@ void updateGame(Game* game) {
         case 0:
             break;
         case 1:
-            if (GetTime() - game->map.pucci_steal_time > 20 &&
-                game->map.pucci_pickup_steal_info[3] == 1) {
-                int p_indice = game->map.pucci_pickup_steal_info[4];
-                game->players[p_indice].speed += game->map.pucci_pickup_steal_info[0];
-                game->players[p_indice].num_bombs += game->map.pucci_pickup_steal_info[1];
-                game->players[p_indice].bomb_distance += game->map.pucci_pickup_steal_info[2];
-                game->map.pucci_pickup_steal_info[3] = 0;
+            if (GetTime() - game->map.delirium_steal_time > 20 &&
+                game->map.delirium_pickup_steal_info[3] == 1) {
+                int p_indice = game->map.delirium_pickup_steal_info[4];
+                game->players[p_indice].speed += game->map.delirium_pickup_steal_info[0];
+                game->players[p_indice].num_bombs += game->map.delirium_pickup_steal_info[1];
+                game->players[p_indice].bomb_distance += game->map.delirium_pickup_steal_info[2];
+                game->map.delirium_pickup_steal_info[3] = 0;
             } 
-            if (!game->map.pucci_pickup_steal_info[3]) {
-                updatePucci(game);
-                colPucciPlayer(game, &game->players[0], 0);
+            if (!game->map.delirium_pickup_steal_info[3]) {
+                game->map.stun_delirium = 0;
+                updateDelirium(game);
+                colDeliriumPlayer(game, &game->players[0], 0);
             }
-            if (!game->map.pucci_pickup_steal_info[3]) colPucciPlayer(game, &game->players[1], 1);
+            if (!game->map.delirium_pickup_steal_info[3]) colDeliriumPlayer(game, &game->players[1], 1);
             break;
     }
     colPlayerPickups(game, &game->players[0]);

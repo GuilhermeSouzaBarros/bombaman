@@ -232,13 +232,14 @@ void map0Setup(Map* map) {
     }
 }
 
-int updatePucciMovement(Game* game, Rectangle* pucci, float* cord, int speed) {
+int updateDeliriumMovement(Game* game, Rectangle* delirium, float* cord, int speed) {
     while (speed) {
         int col=0;
         *cord += speed;
-        if (colBarrier(&game->map, *pucci) ||
-            colExplosion(game->players[0].bombs, game->players[0].num_bombs, *pucci) ||
-            colExplosion(game->players[1].bombs, game->players[1].num_bombs, *pucci)) {
+        if (colBarrier(&game->map, *delirium) ||
+            colExplosion(game->players[0].bombs, game->players[0].num_bombs, *delirium) ||
+            colExplosion(game->players[1].bombs, game->players[1].num_bombs, *delirium)) {
+            game->map.stun_delirium = 1;
             *cord -= speed;
         } else {
             return 1;
@@ -249,8 +250,8 @@ int updatePucciMovement(Game* game, Rectangle* pucci, float* cord, int speed) {
     return 0;
 }
 
-void updatePucci(Game* game) {
-    if (game->time < 60) return;
+void updateDelirium(Game* game) {
+    if (game->time < 45) return;
     int dist_p1 = sqrt(pow(game->players[0].pos.x - game->map.especial->x, 2) +
                        pow(game->players[0].pos.y - game->map.especial->y, 2));
     int dist_p2 = sqrt(pow(game->players[1].pos.x - game->map.especial->x, 2) +
@@ -262,21 +263,22 @@ void updatePucci(Game* game) {
         player = game->players[0];
     }
     if (player.pos.x > game->map.especial->x) {
-        updatePucciMovement(game, game->map.especial, &(*game->map.especial).x, 2);
+        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, 2);
     } else if (player.pos.x < game->map.especial->x) {
-        updatePucciMovement(game, game->map.especial, &(*game->map.especial).x, -2);
+        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, -2);
     }   
     if (player.pos.y > game->map.especial->y) {
-        updatePucciMovement(game, game->map.especial, &(*game->map.especial).y, 2);
+        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, 2);
     } else if (player.pos.y < game->map.especial->y) {
-        updatePucciMovement(game, game->map.especial, &(*game->map.especial).y, -2);
+        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, -2);
     }
 }
 
 void map1SpriteSetup(Map* map) {
-    map->sprite = (Texture2D*)malloc(sizeof(Texture2D) * 2);
+    map->sprite = (Texture2D*)malloc(sizeof(Texture2D) * 3);
     map->sprite[0] = LoadTexture("images/Cathedral.png");
     map->sprite[1] = LoadTexture("sprites/cathedral.png");
+    map->sprite[2] = LoadTexture("sprites/delirium.png");
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
@@ -302,9 +304,9 @@ void map1Setup(Map* map) {
     map->n_especiais = 1;
     map->map_num = 1;
     for (int i = 0; i < 4; i++) {
-        map->pucci_pickup_steal_info[i] = 0;
+        map->delirium_pickup_steal_info[i] = 0;
     }
-    map->pucci_steal_time = GetTime();
+    map->delirium_steal_time = GetTime();
 }
 
 void mapSetup(Game* game, int num_map) {
@@ -373,8 +375,36 @@ void drawEspecials(Game* game) {
             }
             break;
         case 1:
-            if (game->time > 60) {
-                DrawRectangleRec(*game->map.especial, WHITE);
+            if (game->map.stun_delirium) {
+                DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 6, 64 * 4, 64, 64},
+                    (Rectangle){game->map.especial->x, game->map.especial->y, 40, 40},
+                    (Vector2){0, 0}, 0, WHITE);
+            } else if (game->map.delirium_pickup_steal_info[3]) {
+                DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 6, 64 * 5, 64, 64},
+                    (Rectangle){game->map.especial->x, game->map.especial->y, 40, 40},
+                    (Vector2){0, 0}, 0, WHITE);
+            } else if (game->time > 45) {
+                int time_x = (int)(game->time * 6) % 6;
+                int time_y = ((int)game->time * 6) % 12 / 6;
+                DrawTexturePro(game->map.sprite[2], (Rectangle){64 * time_x, 64 * (2 + time_y), 64, 64},
+                    (Rectangle){game->map.especial->x, game->map.especial->y, 40, 40},
+                    (Vector2){0, 0}, 0, WHITE);
+
+            } else if (game->time > 42) {
+                int time = (int)game->time - 42;
+                if (time != 2) {
+                    DrawTexturePro(game->map.sprite[2], (Rectangle){64 * time, 64, 64, 64},
+                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 40, 40}, (Vector2){0, 0}, 0, WHITE);
+
+                } else {
+                    DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 7, 128, 64, 64},
+                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 40, 40}, (Vector2){0, 0}, 0, WHITE);
+
+                }
+            } else if (game->time > 35) {
+                int time = (game->time - 35) * STD_SIZE;
+                DrawTexturePro(game->map.sprite[2], (Rectangle){64 * ((int)(game->time * 10) % 2), 0, 64, 64},
+                    (Rectangle){STD_SIZE * 7, time + STD_SIZE_DIF, 40, 40}, (Vector2){0, 0}, 0, WHITE);
             }
             break;
     }
