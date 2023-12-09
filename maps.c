@@ -281,6 +281,9 @@ void map1SpriteSetup(Map* map) {
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
+                case 0:
+                    map->barriers.sprite_pos[i][j] = (Rectangle){0, 0, 0, 0};
+                    break;
                 case 1:
                     map->barriers.sprite_pos[i][j] = (Rectangle){97, 0, 46, 83};
                     break;
@@ -378,33 +381,37 @@ void drawEspecials(Game* game) {
             if (game->map.stun_delirium) {
                 DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 6, 64 * 4, 64, 64},
                     (Rectangle){game->map.especial->x, game->map.especial->y, 64, 64},
-                    (Vector2){12, 12}, 0, WHITE);
+                    (Vector2){12, 6}, 0, WHITE);
             } else if (game->map.delirium_pickup_steal_info[3]) {
                 DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 6, 64 * 5, 64, 64},
                     (Rectangle){game->map.especial->x, game->map.especial->y, 64, 64},
-                    (Vector2){12, 12}, 0, WHITE);
+                    (Vector2){12, 6}, 0, WHITE);
             } else if (game->time > 45) {
+                int floating = (int)(3 * GetTime()) % 10;
+                if (floating > 4) {
+                    floating = 10 - floating;
+                }
                 int time_x = (int)(game->time * 6) % 6;
                 int time_y = ((int)game->time * 6) % 12 / 6;
                 DrawTexturePro(game->map.sprite[2], (Rectangle){64 * time_x, 64 * (2 + time_y), 64, 64},
                     (Rectangle){game->map.especial->x, game->map.especial->y, 64, 64},
-                    (Vector2){12, 12}, 0, WHITE);
+                    (Vector2){12, 18 + floating}, 0, WHITE);
 
             } else if (game->time > 42) {
                 int time = (int)game->time - 42;
                 if (time != 2) {
                     DrawTexturePro(game->map.sprite[2], (Rectangle){64 * time, 64, 64, 64},
-                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 64, 64}, (Vector2){12, 12}, 0, WHITE);
+                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 64, 64}, (Vector2){12, 18}, 0, WHITE);
 
                 } else {
                     DrawTexturePro(game->map.sprite[2], (Rectangle){64 * 7, 128, 64, 64},
-                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 64, 64}, (Vector2){12, 12}, 0, WHITE);
+                    (Rectangle){STD_SIZE * 7, 7 * STD_SIZE, 64, 64}, (Vector2){12, 18}, 0, WHITE);
 
                 }
             } else if (game->time > 35) {
                 int time = (game->time - 35) * STD_SIZE;
                 DrawTexturePro(game->map.sprite[2], (Rectangle){64 * ((int)(game->time * 10) % 2), 0, 64, 64},
-                    (Rectangle){STD_SIZE * 7, time + STD_SIZE_DIF, 64, 64}, (Vector2){12, 12}, 0, WHITE);
+                    (Rectangle){STD_SIZE * 7, time + STD_SIZE_DIF, 64, 64}, (Vector2){12, 18}, 0, WHITE);
             }
             break;
     }

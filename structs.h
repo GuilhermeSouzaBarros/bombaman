@@ -92,6 +92,7 @@ typedef struct Game {
 
 typedef struct Menu {
     Texture2D background;
+    Rectangle pos_sprite;
     Font* font;
     int screen;
     int game_start;

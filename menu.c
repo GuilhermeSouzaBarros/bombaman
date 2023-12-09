@@ -6,7 +6,13 @@
 
 Menu* initMenu(Placar* placar, Font* font) {
     Menu* menu = (Menu*)malloc(sizeof(Menu));
-    menu->background = LoadTexture("images/hotlands.png");
+    if (rand() % 2) {
+        menu->background = LoadTexture("images/hotlands.png");
+        menu->pos_sprite = (Rectangle){0, 0, 1200, 900};
+    } else {
+        menu->background = LoadTexture("images/isaac.png");
+        menu->pos_sprite = (Rectangle){0, 0, 800, 600};
+    }
     menu->text_input_1 = 0;
     menu->text_input_2 = 0;
     menu->p1_nome    = placar->p1_nome;
@@ -67,9 +73,8 @@ int clickRec(Rectangle rec) {
 
 void updateScreen0(Menu* menu) {
     BeginDrawing();
-    DrawTexturePro(menu->background, (Rectangle){ 0, 0, 1200, 900},
+    DrawTexturePro(menu->background, menu->pos_sprite,
         (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
-    DrawRectangleRec((Rectangle){200, 450, 400, 60}, RED);
 
     Vector2 size = MeasureTextEx(*menu->font, "SUPER", 50, 5);
     DrawRectangle(224 - size.x/2, 100 - size.y/2, size.x + 8, size.y, (Color){0, 0, 0, 192});
@@ -80,9 +85,12 @@ void updateScreen0(Menu* menu) {
     DrawTextEx(*menu->font, "BOMBA", (Vector2){400 - size.x / 2, 190 - size.y / 2}, 150, 15, GOLD);
 
     size = MeasureTextEx(*menu->font, "MAN", 150, 15);
-    DrawRectangle(500 - size.x/2, 320 - size.y/2, size.x + 16, size.y - 19, (Color){0, 0, 0, 192});
-    DrawTextEx(*menu->font, "MAN", (Vector2){505 - size.x / 2, 320 - size.y / 2}, 150, 15, GOLD);
+    DrawRectangle(498 - size.x/2, 320 - size.y/2, size.x + 16, size.y - 19, (Color){0, 0, 0, 192});
+    DrawTextEx(*menu->font, "MAN", (Vector2){503 - size.x / 2, 320 - size.y / 2}, 150, 15, GOLD);
 
+    size = MeasureTextEx(*menu->font, "START BOMBA", 50, 5);
+    DrawRectangle(195, 445, 410, 70, (Color){0, 0, 0, 255});
+    DrawRectangle(200, 450, 400, 60, RED);
     DrawTextEx(*menu->font, "START BOMBA", (Vector2){220, 455}, 50, 5, WHITE);
 
     EndDrawing();
@@ -115,15 +123,22 @@ void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
 
 void updateScreen1(Menu *menu, Placar* placar) {
     BeginDrawing();
-    ClearBackground(DARKGRAY);
+    DrawTexturePro(menu->background, menu->pos_sprite,
+        (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
+    
+    Vector2 size = MeasureTextEx(*menu->font, "SEUS APELIDOS", 50, 5);
+    size.x = 400 - size.x/2;
+    size.y = 100 - size.y/2;
+    DrawTextEx(*menu->font, "SEUS APELIDOS", size, 50, 5, WHITE);
+
     
     DrawRectangleRec((Rectangle){75, 150, 300, 50}, WHITE);
     DrawRectangleLinesEx((Rectangle){75, 150, 300, 50}, 1, BLACK);
-    DrawText(menu->p1_nome, 80, 158, 40, BLACK);
+    DrawText(menu->p1_nome, 80, 158, 40, (Color){128, 228, 228, 255});
     
     DrawRectangleRec((Rectangle){425, 150, 300, 50}, WHITE);
     DrawRectangleLinesEx((Rectangle){425, 150, 300, 50}, 1, BLACK);
-    DrawText(menu->p2_nome, 430, 158, 40, BLACK);
+    DrawText(menu->p2_nome, 430, 158, 40, (Color){206, 161, 154, 255});
 
     DrawRectangleRec((Rectangle){100, 250, 250, 150}, ORANGE);
     if (!menu->map) {

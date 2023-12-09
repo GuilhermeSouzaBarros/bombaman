@@ -91,6 +91,7 @@ void updateGame(Game* game) {
         case 0:
             break;
         case 1:
+            if (game->time < 45) break;
             if (GetTime() - game->map.delirium_steal_time > 20 &&
                 game->map.delirium_pickup_steal_info[3] == 1) {
                 int p_indice = game->map.delirium_pickup_steal_info[4];
