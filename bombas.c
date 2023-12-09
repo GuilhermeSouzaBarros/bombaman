@@ -140,7 +140,9 @@ void initBomb(Game* game, Player player, Bomb* bomb) {
     bomb->isActiveFirstFrame = 1;
     bomb->hasExploded = 0;
     bomb->time = GetTime();
-    bomb->hasColision = 0;
+    for (int i = 0; i < 2; i++) {
+        bomb->hasColision[i] = 0;
+    }
     bomb->fastExplode = 0;
 }
 
@@ -168,9 +170,20 @@ void colBombas(Game* game) {
     }
 }
 
+int colBombasRecPerPlayer(Rectangle target, int player, Bomb bombs[], int n_bombs) {
+    for (int i = 0; i < n_bombs; i++) {
+        if (bombs[i].hasColision[player]) {
+            if (CheckCollisionRecs(bombs[i].pos, target)) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 int colBombasRec(Rectangle target, Bomb bombs[], int n_bombs) {
     for (int i = 0; i < n_bombs; i++) {
-        if (bombs[i].hasColision) {
+        if (bombs[i].hasColision[0] || bombs[i].hasColision[1]) {
             if (CheckCollisionRecs(bombs[i].pos, target)) {
                 return 1;
             }
@@ -281,16 +294,20 @@ void explodeBombs(Game* game, Player* player){
                     bomb->stop_explosion[j] = 0;
                 }
                 bomb->isActive = 0;
-                bomb->hasColision = 0;
+                for (int i = 0; i < 2; i++) {
+                    bomb->hasColision[i] = 0;
+                }
             }
         }
     }
 }
 
 void setBombCol(Game* game, Bomb* bomb) {
-    if (!(CheckCollisionRecs(bomb->pos, game->players[0].pos) ||
-          CheckCollisionRecs(bomb->pos, game->players[1].pos))) {
-        bomb->hasColision = 1;
+    if (!(CheckCollisionRecs(bomb->pos, game->players[0].pos))) {
+        bomb->hasColision[0] = 1;
+    }
+    if (!(CheckCollisionRecs(bomb->pos, game->players[1].pos))) {
+        bomb->hasColision[1] = 1;
     }
 }
 
@@ -304,16 +321,12 @@ void updateBombs(Game* game) {
     colBombas(game);
     for (int i = 0; i < game->players[0].num_bombs; i++) {
         if (game->players[0].bombs[i].isActive) {
-            if (!game->players[0].bombs[i].hasColision) {
-                setBombCol(game, &game->players[0].bombs[i]);
-            }
+            setBombCol(game, &game->players[0].bombs[i]);
         }
     }
     for (int i = 0; i < game->players[1].num_bombs; i++) {
         if (game->players[1].bombs[i].isActive) {
-            if (!game->players[1].bombs[i].hasColision) {
-                setBombCol(game, &game->players[1].bombs[i]);
-            }
+            setBombCol(game, &game->players[1].bombs[i]);
         }
     }
     explodeBombs(game, &game->players[0]);

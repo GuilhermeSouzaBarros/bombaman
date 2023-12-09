@@ -19,6 +19,7 @@ void initPlayer(Game* game, Player* player, char* nome, Rectangle pos, Color col
         }
         for (int j = 0; j < 2; j++) {
             player->bombs[i].sounds[j] = LoadSoundAlias(game->sounds[j]);
+            player->bombs[i].hasColision[j] = 0;
         }
     }
     player->vivo = 1;
@@ -44,13 +45,13 @@ void initPlayer(Game* game, Player* player, char* nome, Rectangle pos, Color col
     player->color = color;
 }
 
-int updateMovement(Game* game, Player* player, float* cord, int speed) {
+int updateMovement(Game* game, int player, float* cord, int speed) {
     while (speed) {
         int col=0;
         *cord += speed;
-        if (colBarrier(&game->map, player->pos) ||
-            colBombasRec(player->pos, game->players[0].bombs, game->players[0].num_bombs) ||
-            colBombasRec(player->pos, game->players[1].bombs, game->players[1].num_bombs)) {
+        if (colBarrier(&game->map, game->players[player].pos) ||
+            colBombasRecPerPlayer(game->players[player].pos, player, game->players[0].bombs, game->players[0].num_bombs) ||
+            colBombasRecPerPlayer(game->players[player].pos, player, game->players[1].bombs, game->players[1].num_bombs)) {
             *cord -= speed;
         } else {
             return speed;
@@ -67,15 +68,15 @@ void updatePlayersPos(Game* game){
     if (IsKeyDown(KEY_A)) vel_x -= game->players[0].speed;
     if (IsKeyDown(KEY_S)) vel_y += game->players[0].speed;
     if (IsKeyDown(KEY_D)) vel_x += game->players[0].speed;
-    vel_x = updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
-    vel_y = updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+    vel_x = updateMovement(game, 0, &game->players[0].pos.x, vel_x);
+    vel_y = updateMovement(game, 0, &game->players[0].pos.y, vel_y);
     if (!(vel_x || vel_y)) {
         game->players[0].is_moving = 0;
         if (game->map.map_num == 0) {
             vel_x = checkCollisionEspecialX(game, &game->players[0]);
             vel_y = checkCollisionEspecialY(game, &game->players[0]);
-            updateMovement(game, &game->players[0], &game->players[0].pos.x, vel_x);
-            updateMovement(game, &game->players[0], &game->players[0].pos.y, vel_y);
+            updateMovement(game, 0, &game->players[0].pos.x, vel_x);
+            updateMovement(game, 0, &game->players[0].pos.y, vel_y);
         }
     } else {
         game->players[0].is_moving = 1;
@@ -96,15 +97,15 @@ void updatePlayersPos(Game* game){
     if (IsKeyDown(KEY_J) || IsKeyDown(KEY_LEFT))  vel_x -= game->players[1].speed;
     if (IsKeyDown(KEY_K) || IsKeyDown(KEY_DOWN))  vel_y += game->players[1].speed;
     if (IsKeyDown(KEY_L) || IsKeyDown(KEY_RIGHT)) vel_x += game->players[1].speed;
-    vel_x = updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
-    vel_y = updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+    vel_x = updateMovement(game, 1, &game->players[1].pos.x, vel_x);
+    vel_y = updateMovement(game, 1, &game->players[1].pos.y, vel_y);
     if (!(vel_x || vel_y)) {
         game->players[1].is_moving = 0;
         if (game->map.map_num == 0) {
             vel_x = checkCollisionEspecialX(game, &game->players[1]);
             vel_y = checkCollisionEspecialY(game, &game->players[1]);
-            updateMovement(game, &game->players[1], &game->players[1].pos.x, vel_x);
-            updateMovement(game, &game->players[1], &game->players[1].pos.y, vel_y);
+            updateMovement(game, 1, &game->players[1].pos.x, vel_x);
+            updateMovement(game, 1, &game->players[1].pos.y, vel_y);
         }
     } else {
         game->players[1].is_moving = 1;

@@ -28,6 +28,7 @@ Menu* initMenu(Placar* placar, Font* font) {
     menu->game_start = 0;
     menu->map = 0;
     menu->font = font;
+    menu->click = LoadSound("sounds/click-button.mp3");
     return menu;
 }
 
@@ -37,6 +38,7 @@ void freeMenu(Menu* menu) {
         UnloadTexture(menu->map_icons[i]);
     }
     UnloadMusicStream(menu->music);
+    UnloadSound(menu->click);
     free(menu);
 }
 
@@ -45,6 +47,7 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
     endmenu->num_map = game->map.map_num;
     strcpy(endmenu->p1_nome, game->players[0].nome);
     strcpy(endmenu->p2_nome, game->players[1].nome);
+    endmenu->winner = 0;
     if (!WindowShouldClose()) {
         if (game->players[0].vivo) {
             endmenu->winner_sprite = LoadTexture("sprites/sans.png");
@@ -64,19 +67,22 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
             endmenu->winner_color = (Color){206, 161, 154, 255};
         } else {
             placar->draws++;
-            endmenu->winner = 0;
             endmenu->winner_color = LIGHTGRAY;
         }
     }
     endmenu->exit = 0;
     endmenu->font = font;
     endmenu->placar = *placar;
+    endmenu->click = LoadSound("sounds/click-button.mp3");
     return endmenu;
 }
 
 void freeEndMenu(EndMenu* endmenu) {
-    UnloadTexture(endmenu->winner_sprite);
-    UnloadMusicStream(endmenu->music);
+    if (endmenu->winner) {
+        UnloadMusicStream(endmenu->music);
+        UnloadTexture(endmenu->winner_sprite);
+    }
+    UnloadSound(endmenu->click);
     free(endmenu);
 }
 
@@ -128,12 +134,13 @@ void updateScreen0(Menu* menu) {
     EndDrawing();
 
     if (clickRec(start_button)) {
+        PlaySound(menu->click);
         menu->screen = 1;
         return;
     }
 }
 
-void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
+void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto, Sound* sound) {
     if (*inserindo_texto && CheckCollisionPointRec(GetMousePosition(), rec)) {
         int letra = 0;
         if (inserindo_texto) {
@@ -142,10 +149,12 @@ void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
                 if (letra >= 32 && letra <= 125 && *n < 9) {
                     texto[*n] = (char)letra;
                     texto[++*n] = 0;
+                    PlaySound(*sound);
                 }
             } while(letra);
             if (IsKeyPressed(KEY_BACKSPACE) && *n) {
                 texto[--*n] = 0;
+                PlaySound(*sound);
             }
         }
     } else {
@@ -210,14 +219,16 @@ void updateScreen1(Menu *menu, Placar* placar) {
     EndDrawing();
 
     if (clickRec((Rectangle){75, 150, 300, 50})) {
+        PlaySound(menu->click);
         menu->text_input_1 = 1;
     }
-    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1);
+    textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1, &menu->click);
 
     if (clickRec((Rectangle){425, 150, 300, 50})) {
+        PlaySound(menu->click);
         menu->text_input_2 = 1;
     }
-    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2);
+    textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2, &menu->click);
 
     if (clickRec(start_match) && menu->p1_qletras && menu->p2_qletras) {
         menu->game_start = 1;
@@ -225,11 +236,13 @@ void updateScreen1(Menu *menu, Placar* placar) {
     }
 
     if (clickRec((Rectangle){100, 250, 250, 150})) {
+        PlaySound(menu->click);
         menu->map = 0;
         placar->next_map = 0;
     }
 
     if (clickRec((Rectangle){450, 250, 250, 150})) {
+        PlaySound(menu->click);
         menu->map = 1;
         placar->next_map = 1;
     }

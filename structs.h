@@ -56,7 +56,7 @@ typedef struct Bomb{
     int hasExploded;
     int distance;
     double time;
-    int hasColision;
+    int hasColision[2]; // indice == player
     int fastExplode;
     Sound sounds[2]; // 0: Explosion | 1: Click 
 }Bomb;
@@ -94,6 +94,7 @@ typedef struct Menu {
     Texture2D background;
     Texture2D map_icons[2];
     Rectangle pos_sprite;
+    Sound click;
     Music music;
     Font* font;
     int screen;
@@ -128,6 +129,7 @@ typedef struct EndMenu {
     int exit;
     int num_map;
     Placar placar;
+    Sound click;
 } EndMenu;
 
 #endif
