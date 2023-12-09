@@ -47,6 +47,7 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
     strcpy(endmenu->p2_nome, game->players[1].nome);
     if (!WindowShouldClose()) {
         if (game->players[0].vivo) {
+            endmenu->winner_sprite = LoadTexture("sprites/sans.png");
             endmenu->music = LoadMusicStream("sounds/sans.mp3");
             SetMusicVolume(endmenu->music, 0.6);
             PlayMusicStream(endmenu->music);
@@ -54,6 +55,10 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
             endmenu->winner = 1;
             endmenu->winner_color = (Color){128, 228, 228, 255};
         } else if (game->players[1].vivo) {
+            endmenu->winner_sprite = LoadTexture("sprites/isaac-thumbsup.png");
+            endmenu->music = LoadMusicStream("sounds/specialist.mp3");
+            SetMusicVolume(endmenu->music, 0.6);
+            PlayMusicStream(endmenu->music);
             placar->p2_wins++;
             endmenu->winner = 2;
             endmenu->winner_color = (Color){206, 161, 154, 255};
@@ -70,6 +75,7 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
 }
 
 void freeEndMenu(EndMenu* endmenu) {
+    UnloadTexture(endmenu->winner_sprite);
     UnloadMusicStream(endmenu->music);
     free(endmenu);
 }
@@ -261,8 +267,8 @@ void drawPlacar(EndMenu* endmenu) {
     drawTextBox(endmenu->font, number, (Vector2){200, 250}, 100, 10, WHITE);
 
     strcpy(number, TextFormat("%d", endmenu->placar.draws));
-    drawTextBox(endmenu->font, "EMPATES", (Vector2){400, 200}, 30, 3, (Color){128, 128, 128, 255});
-    drawTextBox(endmenu->font, number, (Vector2){400, 250}, 60, 6, WHITE);
+    drawTextBox(endmenu->font, "EMPATES", (Vector2){400, 115}, 30, 3, (Color){128, 128, 128, 255});
+    drawTextBox(endmenu->font, number, (Vector2){400, 165}, 60, 6, WHITE);
 
     strcpy(number, TextFormat("%d", endmenu->placar.p2_wins));
     drawTextBox(endmenu->font, endmenu->p2_nome, (Vector2){600, 150}, 40, 5, (Color){206, 161, 154, 255});
@@ -273,6 +279,16 @@ void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     UpdateMusicStream(endmenu->music);
     BeginDrawing();
     ClearBackground(DARKGRAY);
+    if (endmenu->winner == 1) {
+        ClearBackground(BLACK);
+        DrawTexturePro(endmenu->winner_sprite, (Rectangle){0, 6, 200, 200}, (Rectangle){300, 200, 200, 200},
+        (Vector2){0, 0}, 0, WHITE);
+    } 
+    if (endmenu->winner == 2) {
+        ClearBackground((Color){32, 59, 78, 255});
+        DrawTexturePro(endmenu->winner_sprite, (Rectangle){124, 135, 752, 730}, (Rectangle){300, 200, 200, 200},
+        (Vector2){0, 0}, 0, WHITE);
+    }
 
     char text[20];
     Color color = {192, 192, 192, 255};

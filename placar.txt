@@ -113,3 +113,58 @@ Vitórias de f: 1
 Vitórias de g: 1
 Empates: 0
 
+family VS Friendly
+Vitórias de family: 0
+Vitórias de Friendly: 1
+Empates: 0
+
+gagagagag VS MMMMMMMMM
+Vitórias de gagagagag: 0
+Vitórias de MMMMMMMMM: 0
+Empates: 1
+
+faga VS gggg
+Vitórias de faga: 0
+Vitórias de gggg: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 1
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 1
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 2
+Vitórias de g: 2
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 1
+Vitórias de g: 0
+Empates: 0
+

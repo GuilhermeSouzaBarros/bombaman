@@ -1,5 +1,5 @@
 bomba: main.o game.o player.o bombas.o maps.o menu.o pickup.o structs.o
-	gcc game.o main.o player.o bombas.o maps.o menu.o pickup.o structs.o -o bomba -lraylib -lm 
+	gcc game.o main.o player.o bombas.o maps.o menu.o pickup.o structs.o -o bomba -lraylib -lm
 
 main.o: main.c structs.o
 	gcc -g -c main.c

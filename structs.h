@@ -118,6 +118,7 @@ typedef struct Placar {
 } Placar;
 
 typedef struct EndMenu {
+    Texture2D winner_sprite;
     Font* font;
     Music music;
     char p1_nome[10];
