@@ -53,7 +53,7 @@ int collisionEspecial0X(Game* game, Player* player) {
     for (int i = 0; i < game->map.n_especiais; i++) {
         if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
             Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
-            if (i % 2) {
+            if (game->map.especial[i].width == 8) {
                 if (player->pos.x + 16 <= colisao.x) {
                     return -colisao.width;
                 } else {
@@ -69,7 +69,7 @@ int collisionEspecial0Y(Game* game, Player* player) {
     for (int i = 0; i < game->map.n_especiais; i++) {
         if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
             Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
-            if (!(i % 2)) {
+            if (game->map.especial[i].height == 8) {
                 if (player->pos.y + 16 <= colisao.y) {
                     return -colisao.height;
                 } else {

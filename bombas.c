@@ -181,17 +181,6 @@ int colBombasRecPerPlayer(Rectangle target, int player, Bomb bombs[], int n_bomb
     return 0;
 }
 
-int colBombasRec(Rectangle target, Bomb bombs[], int n_bombs) {
-    for (int i = 0; i < n_bombs; i++) {
-        if (bombs[i].hasColision[0] || bombs[i].hasColision[1]) {
-            if (CheckCollisionRecs(bombs[i].pos, target)) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 int colDestroyable(Game* game, Rectangle explosion) {
     for(int i = 0; i < game->map.num_barriers_line; i++){
         for (int j = 0; j < game->map.num_barriers_coln; j++) {
