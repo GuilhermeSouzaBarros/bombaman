@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initPlayer(Game* game, Player* player, char* nome, Color color, Rectangle pos) {
+void initPlayer(Game* game, Player* player, char* nome, Rectangle pos, Color color) {
     player->pos = pos;
-    player->color = color;
     player->nome = nome;
     player->speed = 4;
     player->num_bombs = 1;
@@ -31,17 +30,18 @@ void initPlayer(Game* game, Player* player, char* nome, Color color, Rectangle p
         player->sprite.y_dif = 51;
         player->sprite.x_size = 25;
         player->sprite.y_size = 30;
-        player->sprite.offset = (Vector2){-3, 0};
+        player->sprite.offset = (Vector2){0, 0};
     } else {
         player->sprite.self = LoadTexture("sprites/isaac_spritesheet.png");
         player->sprite.x_dif = 30;
         player->sprite.y_dif = 36;
         player->sprite.x_size = 30;
         player->sprite.y_size = 36;
-        player->sprite.offset = (Vector2){-3, 3};
+        player->sprite.offset = (Vector2){0, 3};
     }
     player->sprite_bomb = LoadTexture("sprites/bob-omb sprite.png");
     player->sprite_explosion = LoadTexture("sprites/bomba_sprite.png");
+    player->color = color;
 }
 
 int updateMovement(Game* game, Player* player, float* cord, int speed) {

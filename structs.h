@@ -92,7 +92,9 @@ typedef struct Game {
 
 typedef struct Menu {
     Texture2D background;
+    Texture2D map_icons[2];
     Rectangle pos_sprite;
+    Music music;
     Font* font;
     int screen;
     int game_start;
@@ -105,17 +107,6 @@ typedef struct Menu {
     int map;
 } Menu;
 
-typedef struct EndMenu {
-    Font* font;
-    Music music;
-    char p1_nome[10];
-    char p2_nome[10];
-    int winner; // | 0: Draw |
-    Color winner_color;
-    int exit;
-    int num_map;
-} EndMenu;
-
 typedef struct Placar {
     int p1_wins;
     int p2_wins;
@@ -125,5 +116,17 @@ typedef struct Placar {
     int rematch;
     int next_map;
 } Placar;
+
+typedef struct EndMenu {
+    Font* font;
+    Music music;
+    char p1_nome[10];
+    char p2_nome[10];
+    int winner; // | 0: Draw |
+    Color winner_color;
+    int exit;
+    int num_map;
+    Placar placar;
+} EndMenu;
 
 #endif

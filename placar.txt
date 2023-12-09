@@ -14,111 +14,6 @@ Vitórias de g: 1
 Empates: 0
 
 f VS g
-Vitórias de f: 1
-Vitórias de g: 0
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 4
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS ggg
-Vitórias de f: 0
-Vitórias de ggg: 2
-Empates: 0
-
-f VS g
-Vitórias de f: 2
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 0
-Empates: 1
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
 Vitórias de f: 0
 Vitórias de g: 2
 Empates: 0
@@ -129,26 +24,6 @@ Vitórias de g: 1
 Empates: 0
 
 f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 1
-Vitórias de g: 2
-Empates: 0
-
-f VS g
-Vitórias de f: 2
-Vitórias de g: 0
-Empates: 0
-
-f VS g
-Vitórias de f: 1
-Vitórias de g: 0
-Empates: 0
-
-f VS g
 Vitórias de f: 1
 Vitórias de g: 0
 Empates: 0
@@ -158,24 +33,39 @@ Vitórias de f: 0
 Vitórias de g: 1
 Empates: 0
 
+BOMBASTIC VS FELLA
+Vitórias de BOMBASTIC: 1
+Vitórias de FELLA: 0
+Empates: 0
+
 f VS g
 Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+g VS f
 Vitórias de g: 0
-Empates: 1
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
+Vitórias de f: 1
 Empates: 0
 
-f VS g
-Vitórias de f: 2
-Vitórias de g: 1
+fellas VS all my
+Vitórias de fellas: 0
+Vitórias de all my: 1
 Empates: 0
 
-f VS g
+f VS a
 Vitórias de f: 0
-Vitórias de g: 1
+Vitórias de a: 1
 Empates: 0
 
 f VS g
@@ -185,56 +75,41 @@ Empates: 0
 
 f VS g
 Vitórias de f: 0
-Vitórias de g: 0
-Empates: 1
+Vitórias de g: 1
+Empates: 0
+
+f VS gga
+Vitórias de f: 0
+Vitórias de gga: 1
+Empates: 0
+
+f VS g
+Vitórias de f: 0
+Vitórias de g: 1
+Empates: 0
+
+MMMMMMMMM VS MMMMMMMMM
+Vitórias de MMMMMMMMM: 0
+Vitórias de MMMMMMMMM: 1
+Empates: 0
 
 f VS g
 Vitórias de f: 1
-Vitórias de g: 0
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 2
-Empates: 0
-
-f VS g
-Vitórias de f: 0
 Vitórias de g: 1
 Empates: 0
 
-f VS g
+f VS gaaaaaaaa
 Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 2
+Vitórias de gaaaaaaaa: 1
 Empates: 0
 
 f VS g
 Vitórias de f: 1
-Vitórias de g: 0
-Empates: 0
-
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
-Vitórias de f: 0
 Vitórias de g: 3
 Empates: 0
 
 f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
-f VS g
 Vitórias de f: 1
-Vitórias de g: 0
+Vitórias de g: 1
 Empates: 0
 

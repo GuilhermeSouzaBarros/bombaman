@@ -199,6 +199,7 @@ int colDestroyable(Game* game, Rectangle explosion) {
                     for (int k = 0; k < game->total_pickups; k++) {
                         if (game->pickups[k].tile_x == i && game->pickups[k].tile_y == j) {
                             game->pickups[k].visible = 1;
+                            break;
                         }
                     }
                     return 1;

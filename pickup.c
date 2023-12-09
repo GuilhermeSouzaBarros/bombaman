@@ -75,7 +75,7 @@ void drawPickup(Texture2D* sprite, Pickup* pickups, int n) {
                     if (floating > 4) {
                         floating = 10 - floating;
                     }
-                    target.height = 48; 
+                    target.height = 48;
                     DrawTexturePro(*sprite, (Rectangle){420, 80, 120, 160}, target,
                     (Vector2){0, 8 + floating}, 0, WHITE);
                     break;

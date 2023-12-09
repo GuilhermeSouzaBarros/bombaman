@@ -9,10 +9,15 @@ Menu* initMenu(Placar* placar, Font* font) {
     if (rand() % 2) {
         menu->background = LoadTexture("images/hotlands.png");
         menu->pos_sprite = (Rectangle){0, 0, 1200, 900};
+        menu->music = LoadMusicStream("sounds/Undertale OST - Start Menu Theme.mp3");
     } else {
         menu->background = LoadTexture("images/isaac.png");
         menu->pos_sprite = (Rectangle){0, 0, 800, 600};
+        menu->music = LoadMusicStream("sounds/The Binding of Isaac OST - Title Theme.mp3");
     }
+    PlayMusicStream(menu->music);
+    menu->map_icons[0] = LoadTexture("sprites/Undertale-Logo.png");
+    menu->map_icons[1] = LoadTexture("sprites/isaac_logo.png");
     menu->text_input_1 = 0;
     menu->text_input_2 = 0;
     menu->p1_nome    = placar->p1_nome;
@@ -28,6 +33,10 @@ Menu* initMenu(Placar* placar, Font* font) {
 
 void freeMenu(Menu* menu) {
     UnloadTexture(menu->background);
+    for (int i = 0; i < 2; i++) {
+        UnloadTexture(menu->map_icons[i]);
+    }
+    UnloadMusicStream(menu->music);
     free(menu);
 }
 
@@ -43,11 +52,11 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
             PlayMusicStream(endmenu->music);
             placar->p1_wins++;
             endmenu->winner = 1;
-            endmenu->winner_color = game->players[0].color;
+            endmenu->winner_color = (Color){128, 228, 228, 255};
         } else if (game->players[1].vivo) {
             placar->p2_wins++;
             endmenu->winner = 2;
-            endmenu->winner_color = game->players[1].color;
+            endmenu->winner_color = (Color){206, 161, 154, 255};
         } else {
             placar->draws++;
             endmenu->winner = 0;
@@ -55,6 +64,8 @@ EndMenu* initEndMenu(Game* game, Placar* placar, Font* font) {
         }
     }
     endmenu->exit = 0;
+    endmenu->font = font;
+    endmenu->placar = *placar;
     return endmenu;
 }
 
@@ -71,31 +82,46 @@ int clickRec(Rectangle rec) {
     return 0;
 }
 
+int hoverRec(Rectangle rec) {
+    if (CheckCollisionPointRec(GetMousePosition(), rec)) {
+        return 1;
+    }
+    return 0;
+}
+
+void drawTextBox(Font* font, char* text, Vector2 pos, int font_size, int spacing, Color color) {
+    Vector2 size = MeasureTextEx(*font, text, font_size, spacing);
+    DrawRectangle(pos.x - size.x/2 - 4, pos.y - size.y/2 + 8, size.x + 4, size.y - 16, (Color){0, 0, 0, 128});
+    DrawTextEx(*font, text, (Vector2){pos.x - size.x / 2, pos.y - size.y / 2}, font_size, spacing, color);
+}
+
+void drawButtonWithText(Font* font, char* text, Rectangle pos, int font_size, int spacing, Color color) {
+    if (hoverRec(pos)) {
+        color.r /= 2;
+        color.g /= 2;
+        color.b /= 2;
+    }
+        DrawRectangle(pos.x - 4, pos.y - 4, pos.width + 8, pos.height + 8, (Color){0, 0, 0, 192});
+        DrawRectangle(pos.x - 2, pos.y - 2, pos.width + 4, pos.height + 4, color);
+        DrawTextEx(*font, text, (Vector2){pos.x, pos.y}, font_size, spacing, BLACK);
+}
+
 void updateScreen0(Menu* menu) {
     BeginDrawing();
     DrawTexturePro(menu->background, menu->pos_sprite,
         (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
 
-    Vector2 size = MeasureTextEx(*menu->font, "SUPER", 50, 5);
-    DrawRectangle(224 - size.x/2, 100 - size.y/2, size.x + 8, size.y, (Color){0, 0, 0, 192});
-    DrawTextEx(*menu->font, "SUPER", (Vector2){228 - size.x / 2, 100 - size.y / 2}, 50, 5, (Color){80, 220, 220, 255});
+    drawTextBox(menu->font, "SUPER", (Vector2){228, 100},  50,  5, (Color){80, 220, 220, 255});
+    drawTextBox(menu->font, "BOMBA", (Vector2){400, 190}, 150, 15, GOLD);
+    drawTextBox(menu->font, "MAN"  , (Vector2){503, 320}, 150, 15, GOLD);
 
-    size = MeasureTextEx(*menu->font, "BOMBA", 150, 15);
-    DrawRectangle(395 - size.x/2, 195 - size.y/2, size.x + 16, size.y - 23, (Color){0, 0, 0, 192});
-    DrawTextEx(*menu->font, "BOMBA", (Vector2){400 - size.x / 2, 190 - size.y / 2}, 150, 15, GOLD);
-
-    size = MeasureTextEx(*menu->font, "MAN", 150, 15);
-    DrawRectangle(498 - size.x/2, 320 - size.y/2, size.x + 16, size.y - 19, (Color){0, 0, 0, 192});
-    DrawTextEx(*menu->font, "MAN", (Vector2){503 - size.x / 2, 320 - size.y / 2}, 150, 15, GOLD);
-
-    size = MeasureTextEx(*menu->font, "START BOMBA", 50, 5);
-    DrawRectangle(195, 445, 410, 70, (Color){0, 0, 0, 255});
-    DrawRectangle(200, 450, 400, 60, RED);
-    DrawTextEx(*menu->font, "START BOMBA", (Vector2){220, 455}, 50, 5, WHITE);
+    Vector2 size = MeasureTextEx(*menu->font, "START BOMBA", 50, 5);
+    Rectangle start_button = {400 - size.x / 2, 450 - size.y / 2, size.x, size.y};
+    drawButtonWithText(menu->font, "START BOMBA", start_button, 50, 5, RED);
 
     EndDrawing();
 
-    if (clickRec((Rectangle){200, 450, 400, 60})) {
+    if (clickRec(start_button)) {
         menu->screen = 1;
         return;
     }
@@ -121,51 +147,73 @@ void textoRec(char* texto, int* n, Rectangle rec, int* inserindo_texto) {
     }
 }
 
+void drawInputTextBox(Font* font, char* text, Rectangle pos, int font_size, int spacing, Color color, int active) {
+    Color Background = {32, 32, 32, 255};
+    if (active) {
+        Background = (Color){128, 128, 128, 255};
+    } else {
+        if (CheckCollisionPointRec(GetMousePosition(), pos)) {
+            Background = (Color){64, 64, 64, 255};
+        }
+    }
+    DrawRectangleRec(pos, Background);
+    DrawRectangleLinesEx(pos, 1, WHITE);
+    DrawTextEx(*font, text, (Vector2){pos.x + 5, pos.y + 5}, font_size, spacing, color);
+}
+
 void updateScreen1(Menu *menu, Placar* placar) {
     BeginDrawing();
     DrawTexturePro(menu->background, menu->pos_sprite,
         (Rectangle){0, 0, 800, 600}, (Vector2){0, 0}, 0, WHITE);
-    
-    Vector2 size = MeasureTextEx(*menu->font, "SEUS APELIDOS", 50, 5);
-    size.x = 400 - size.x/2;
-    size.y = 100 - size.y/2;
-    DrawTextEx(*menu->font, "SEUS APELIDOS", size, 50, 5, WHITE);
 
+    drawTextBox(menu->font, "APELIODS", (Vector2){400, 100}, 50, 5, WHITE);
     
-    DrawRectangleRec((Rectangle){75, 150, 300, 50}, WHITE);
-    DrawRectangleLinesEx((Rectangle){75, 150, 300, 50}, 1, BLACK);
-    DrawText(menu->p1_nome, 80, 158, 40, (Color){128, 228, 228, 255});
-    
-    DrawRectangleRec((Rectangle){425, 150, 300, 50}, WHITE);
-    DrawRectangleLinesEx((Rectangle){425, 150, 300, 50}, 1, BLACK);
-    DrawText(menu->p2_nome, 430, 158, 40, (Color){206, 161, 154, 255});
+    drawInputTextBox(menu->font, menu->p1_nome, (Rectangle){75, 150, 300, 50}, 40, 4,
+        (Color){128, 228, 228, 255}, menu->text_input_1);
+    drawInputTextBox(menu->font, menu->p2_nome, (Rectangle){425, 150, 300, 50}, 40, 4,
+        (Color){206, 161, 154, 255}, menu->text_input_2);
 
-    DrawRectangleRec((Rectangle){100, 250, 250, 150}, ORANGE);
+    DrawRectangle(100, 250, 250, 150, BLACK);
+    DrawTexturePro(menu->map_icons[0], (Rectangle){0, 0, 3840, 2160}, (Rectangle){100, 250, 250, 150},
+        (Vector2){0, 0}, 0, WHITE);
     if (!menu->map) {
-        DrawRectangleLinesEx((Rectangle){100, 250, 250, 150}, 1, BLACK);
+        DrawRectangleLinesEx((Rectangle){100, 250, 250, 150}, 2, WHITE);
     }
 
-    DrawRectangleRec((Rectangle){450, 250, 250, 150}, WHITE);
+    DrawRectangle(450, 250, 250, 150, WHITE);
+    DrawTexturePro(menu->map_icons[1], (Rectangle){60, 96, 380, 108}, (Rectangle){450, 250, 250, 80},
+        (Vector2){0, -35}, 0, WHITE);
     if (menu->map) {
-        DrawRectangleLinesEx((Rectangle){450, 250, 250, 150}, 1, BLACK);
+        DrawRectangleLinesEx((Rectangle){450, 250, 250, 150}, 2, (Color){173, 139, 90, 255});
     }
+
+    char start_button_text[9];
+    Color start_button_color;
 
     if(menu->p1_qletras && menu->p2_qletras) {
-        DrawRectangleRec((Rectangle){588, 513, 200, 75}, RED);
+        strcpy(start_button_text, "LESS GO");
+        start_button_color = RED;
     } else {
-        DrawRectangleRec((Rectangle){588, 513, 200, 75}, GRAY);
+        strcpy(start_button_text, "Apelidos");
+        start_button_color = GRAY;
     }
+    Vector2 size = MeasureTextEx(*menu->font, start_button_text, 50, 5);
+    Rectangle start_match = {650 - size.x / 2, 550 - size.y / 2, size.x, size.y};
+    drawButtonWithText(menu->font, start_button_text, start_match, 50, 5, start_button_color);
+
     EndDrawing();
 
     if (clickRec((Rectangle){75, 150, 300, 50})) {
         menu->text_input_1 = 1;
     }
     textoRec(menu->p1_nome, &menu->p1_qletras, (Rectangle){75, 150, 300, 50}, &menu->text_input_1);
+
     if (clickRec((Rectangle){425, 150, 300, 50})) {
         menu->text_input_2 = 1;
     }
     textoRec(menu->p2_nome, &menu->p2_qletras, (Rectangle){425, 150, 300, 50}, &menu->text_input_2);
-    if (clickRec((Rectangle){588, 513, 200, 75}) && menu->p1_qletras && menu->p2_qletras) {
+
+    if (clickRec(start_match) && menu->p1_qletras && menu->p2_qletras) {
         menu->game_start = 1;
         return;
     }
@@ -182,6 +230,7 @@ void updateScreen1(Menu *menu, Placar* placar) {
 }
 
 void menuLoop(Menu* menu, Placar* placar) {
+    UpdateMusicStream(menu->music);
     switch (menu->screen) {
         case 0:
             updateScreen0(menu);
@@ -205,6 +254,21 @@ void atualizaPlacar(EndMenu* endmenu, Placar* placar) {
     endmenu->exit = 1;
 }
 
+void drawPlacar(EndMenu* endmenu) {
+    drawTextBox(endmenu->font, endmenu->p1_nome, (Vector2){200, 150}, 40, 4, (Color){128, 228, 228, 255});
+    char number[5];
+    strcpy(number, TextFormat("%d", endmenu->placar.p1_wins));
+    drawTextBox(endmenu->font, number, (Vector2){200, 250}, 100, 10, WHITE);
+
+    strcpy(number, TextFormat("%d", endmenu->placar.draws));
+    drawTextBox(endmenu->font, "EMPATES", (Vector2){400, 200}, 30, 3, (Color){128, 128, 128, 255});
+    drawTextBox(endmenu->font, number, (Vector2){400, 250}, 60, 6, WHITE);
+
+    strcpy(number, TextFormat("%d", endmenu->placar.p2_wins));
+    drawTextBox(endmenu->font, endmenu->p2_nome, (Vector2){600, 150}, 40, 5, (Color){206, 161, 154, 255});
+    drawTextBox(endmenu->font, number, (Vector2){600, 250}, 100, 10, WHITE);
+}
+
 void endMenuLoop(EndMenu* endmenu, Placar* placar) {
     UpdateMusicStream(endmenu->music);
     BeginDrawing();
@@ -222,13 +286,22 @@ void endMenuLoop(EndMenu* endmenu, Placar* placar) {
         strcpy(text, "EMPATE");
     }
 
-    DrawText(text, 400 - (MeasureText(text, 50)/2), 150, 50, color);
+    drawTextBox(endmenu->font, text, (Vector2){400, 75}, 50, 5, color);
 
-    DrawRectangleRec((Rectangle){75, 400, 300, 100}, BLUE);
-    DrawText("REMATCH!", 225 - (MeasureText("REMATCH!", 50)/2), 425, 50, BLACK);
+    drawPlacar(endmenu);
 
-    DrawRectangleRec((Rectangle){425, 400, 300, 100}, RED);
-    DrawText("Start Menu", 575 - (MeasureText("Start Menu", 50)/2), 425, 50, BLACK);
+    Vector2 size = MeasureTextEx(*endmenu->font, "REMATCH!", 50, 5);
+    size.x += 4;
+    size.y *= 0.9;
+    Rectangle rematch_button = {200 - size.x / 2, 450 - size.y / 2, size.x, size.y};
+    drawButtonWithText(endmenu->font, "REMATCH!", rematch_button, 50, 5, (Color){32, 255, 255, 255});
+
+    size = MeasureTextEx(*endmenu->font, "Start Menu", 50, 4);
+    size.x += 4;
+    size.y *= 0.9;
+    Rectangle main_menu_button = {600 - size.x / 2, 450 - size.y / 2, size.x, size.y};
+    drawButtonWithText(endmenu->font, "Start Menu", main_menu_button, 50, 4, RED);
+    
 
     EndDrawing();
 

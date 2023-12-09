@@ -305,6 +305,7 @@ void map1Setup(Map* map) {
     *(map->especial) = (Rectangle){7*STD_SIZE + STD_SIZE_DIF, 7*STD_SIZE + STD_SIZE_DIF, STD_SIZE_ENT, STD_SIZE_ENT};
     map->n_especiais = 1;
     map->map_num = 1;
+    map->stun_delirium = 0;
     for (int i = 0; i < 4; i++) {
         map->delirium_pickup_steal_info[i] = 0;
     }
