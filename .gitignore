@@ -1,0 +1,9 @@
+bombas.o
+bomba
+game.o
+main.o
+maps.o
+structs.o
+menu.o
+pickup.o
+player.o
