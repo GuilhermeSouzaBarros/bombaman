@@ -105,7 +105,7 @@ void updateGame(Game* game) {
 
     if (game->end_game == 0) {
         updatePlayersPos(game);
-        if (game->map.map_num == 1 && game->time < 45) {
+        if (game->map.map_num == 1 && game->time > 45) {
             updateDelirium(game);
             colDeliriumPlayer(game, &game->players[0], 0);
         }
