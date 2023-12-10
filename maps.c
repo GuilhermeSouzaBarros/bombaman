@@ -49,7 +49,7 @@ int colBarrier(Map *map, Rectangle target){
     return 0;
 }
 
-int collisionEspecial0X(Game* game, Player* player) {
+int checkCollisionEspecialX(Game* game, Player* player) {
     for (int i = 0; i < game->map.n_especiais; i++) {
         if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
             Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
@@ -65,7 +65,7 @@ int collisionEspecial0X(Game* game, Player* player) {
     return 0;
 }
 
-int collisionEspecial0Y(Game* game, Player* player) {
+int checkCollisionEspecialY(Game* game, Player* player) {
     for (int i = 0; i < game->map.n_especiais; i++) {
         if (CheckCollisionRecs(player->pos, game->map.especial[i])) {
             Rectangle colisao = GetCollisionRec(player->pos, game->map.especial[i]);
@@ -79,20 +79,6 @@ int collisionEspecial0Y(Game* game, Player* player) {
         }
     }
     return 0;
-}
-
-int checkCollisionEspecialX(Game* game, Player* player) {
-    switch(game->map.map_num) {
-        case 0:
-            return collisionEspecial0X(game, player);
-    }
-}
-
-int checkCollisionEspecialY(Game* game, Player* player) {
-    switch(game->map.map_num) {
-        case 0:
-            return collisionEspecial0Y(game, player);
-    }
 }
 
 void baseSetup(Game* game){
@@ -251,25 +237,40 @@ int updateDeliriumMovement(Game* game, Rectangle* delirium, float* cord, int spe
 
 void updateDelirium(Game* game) {
     if (game->time < 45) return;
-    int dist_p1 = sqrt(pow(game->players[0].pos.x - game->map.especial->x, 2) +
-                       pow(game->players[0].pos.y - game->map.especial->y, 2));
-    int dist_p2 = sqrt(pow(game->players[1].pos.x - game->map.especial->x, 2) +
-                       pow(game->players[1].pos.y - game->map.especial->y, 2));
-    Player player;
-    if (dist_p1 > dist_p2) {
-        player = game->players[1];
-    } else {
-        player = game->players[0];
+    if (GetTime() - game->map.delirium_steal_time > 20 &&
+        game->map.delirium_pickup_steal_info[3] == 1) {
+        int p_indice = game->map.delirium_pickup_steal_info[4];
+        game->players[p_indice].speed += game->map.delirium_pickup_steal_info[0];
+        game->players[p_indice].num_bombs += game->map.delirium_pickup_steal_info[1];
+        game->players[p_indice].bomb_distance += game->map.delirium_pickup_steal_info[2];
+        game->map.delirium_pickup_steal_info[3] = 0;
+    } 
+    game->map.stun_delirium = 0;
+    if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, *game->map.especial) ||
+        colExplosion(game->players[1].bombs, game->players[1].num_bombs, *game->map.especial)) {
+        game->map.stun_delirium = 1;
     }
-    if (player.pos.x > game->map.especial->x) {
-        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, 2);
-    } else if (player.pos.x < game->map.especial->x) {
-        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, -2);
-    }   
-    if (player.pos.y > game->map.especial->y) {
-        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, 2);
-    } else if (player.pos.y < game->map.especial->y) {
-        updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, -2);
+    if (!game->map.delirium_pickup_steal_info[3]) {
+        int dist_p1 = sqrt(pow(game->players[0].pos.x - game->map.especial->x, 2) +
+                           pow(game->players[0].pos.y - game->map.especial->y, 2));
+        int dist_p2 = sqrt(pow(game->players[1].pos.x - game->map.especial->x, 2) +
+                           pow(game->players[1].pos.y - game->map.especial->y, 2));
+        Player player;
+        if (dist_p1 > dist_p2) {
+            player = game->players[1];
+        } else {
+            player = game->players[0];
+        }
+        if (player.pos.x > game->map.especial->x) {
+            updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, 2);
+        } else if (player.pos.x < game->map.especial->x) {
+            updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, -2);
+        }   
+        if (player.pos.y > game->map.especial->y) {
+            updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, 2);
+        } else if (player.pos.y < game->map.especial->y) {
+            updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, -2);
+        };
     }
 }
 

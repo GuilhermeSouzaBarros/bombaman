@@ -30,15 +30,17 @@ void initPlayer(Game* game, Player* player, char* nome, Rectangle pos, Color col
         player->sprite.x_dif = 28;
         player->sprite.y_dif = 51;
         player->sprite.x_size = 25;
-        player->sprite.y_size = 30;
-        player->sprite.offset = (Vector2){0, 0};
+        player->sprite.y_size = 32;
+        player->sprite.offset = (Vector2){0, 2};
+        player->sprite.death_frame = (Rectangle){56, 204, 25, 32};
     } else {
         player->sprite.self = LoadTexture("sprites/isaac_spritesheet.png");
         player->sprite.x_dif = 30;
         player->sprite.y_dif = 36;
         player->sprite.x_size = 30;
         player->sprite.y_size = 36;
-        player->sprite.offset = (Vector2){0, 3};
+        player->sprite.offset = (Vector2){0, 0};
+        player->sprite.death_frame = (Rectangle){60, 145, 37, 35};
     }
     player->sprite_bomb = LoadTexture("sprites/bob-omb sprite.png");
     player->sprite_explosion = LoadTexture("sprites/bomba_sprite.png");
@@ -123,7 +125,6 @@ void updatePlayersPos(Game* game){
 }
 
 void colDeliriumPlayer(Game* game, Player* player, int p) {
-    if (game->time < 60) return; 
     if (CheckCollisionRecs(player->pos, *game->map.especial)) {
         game->map.delirium_pickup_steal_info[0] = player->speed - 2;
         game->map.delirium_pickup_steal_info[1] = player->num_bombs - 1;
@@ -138,10 +139,37 @@ void colDeliriumPlayer(Game* game, Player* player, int p) {
 }
 
 void drawPlayerSprite(Game* game, Player* player) {
-    DrawTexturePro(player->sprite.self,
+    if (player->vivo) {
+        DrawTexturePro(player->sprite.self,
                    (Rectangle){player->sprite.x_dif * player->is_moving * (((int)(((2 * player->speed) * game->time)) % 4)),
                                player->sprite.y_dif * player->facing, player->sprite.x_size, player->sprite.y_size},
+                   (Rectangle){player->pos.x, player->pos.y, 30, 36 + player->sprite.offset.y},
+                   player->sprite.offset,
+                   0, WHITE);
+    } else {
+        int frame = (int)(2 * game->end_time) - (int)(2 * game->time);
+        switch (frame) {
+            case 5 ... 6:
+                DrawTexturePro(player->sprite.self,
+                   (Rectangle){0, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
                    (Rectangle){player->pos.x, player->pos.y, 30, 36},
                    player->sprite.offset,
                    0, WHITE);
+                break;
+            case 4:
+                DrawTexturePro(player->sprite.self,
+                    (Rectangle){player->sprite.x_dif, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
+                    (Rectangle){player->pos.x, player->pos.y, 30, 36},
+                    player->sprite.offset,
+                    0, WHITE);
+                break;
+            case 0 ... 3:
+                DrawTexturePro(player->sprite.self,
+                               player->sprite.death_frame,
+                    (Rectangle){player->pos.x, player->pos.y, 36, 36},
+                    player->sprite.offset,
+                    0, WHITE);
+                break;
+        }
+    }
 }

@@ -35,7 +35,7 @@ int main(void) {
         Game* game = initGame(placar.next_map, menu->p1_nome, menu->p2_nome, &font);
         freeMenu(menu);
         
-        while (game->players[0].vivo && game->players[1].vivo && !WindowShouldClose()) {
+        while (!(game->exit_game || WindowShouldClose())) {
             gameLoop(game, &placar);
         }
 

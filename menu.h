@@ -6,6 +6,8 @@
 #ifndef MENU
 #define MENU
 
+void drawTextBox(Font* font, char* text, Vector2 pos, int font_size, int spacing, Color color);
+
 Menu* initMenu(Placar* placar, Font* font);
 void freeMenu(Menu* menu);
 

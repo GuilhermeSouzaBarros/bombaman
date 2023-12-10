@@ -21,6 +21,7 @@ typedef struct Sprite {
     int y_dif;
     int x_size;
     int y_size;
+    Rectangle death_frame;
     Vector2 offset;
 } Sprite;
 
@@ -84,10 +85,13 @@ typedef struct Game {
     int total_pickups;
     double time;
     double start_time;
+    double end_time;
+    int end_game;
+    int exit_game;
     Font* font;
     Texture2D pickups_sprite;
     Music music; 
-    Sound sounds[3]; // 0: Explosion | 1: Click | 2: Bubble
+    Sound sounds[4]; // 0: Explosion | 1: Click | 2: Bubble | 3: timer
 } Game;
 
 typedef struct Menu {

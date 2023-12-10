@@ -230,7 +230,8 @@ void explodeBombs(Game* game, Player* player){
     for(int i = 0; i < player->num_bombs; i++){
         if(player->bombs[i].isActive){
             Bomb* bomb = &player->bombs[i];
-            if ((fabs(bomb->time - GetTime()) > 2 && fabs(bomb->time - GetTime()) < 3) || bomb->fastExplode){
+            if (((fabs(bomb->time - GetTime()) > 2 && fabs(bomb->time - GetTime()) < 3) && !game->end_game) ||
+                (bomb->fastExplode || bomb->hasExploded)){
                 if (bomb->isActiveFirstFrame) {
                     PlaySound(player->bombs[i].sounds[0]);
                     for (int j = 0; j < 4; j++) {
@@ -276,7 +277,7 @@ void explodeBombs(Game* game, Player* player){
                     }
                 }
             }
-            if (fabs(bomb->time - GetTime()) > 3){
+            if ((fabs(bomb->time - GetTime()) > 3) && (!game->end_game || game->time > 120)){
                 bomb->pos = (Rectangle) {0, 0, 0, 0};
                 for (int j = 0; j < 4; j++) {
                     bomb->explosions[j] = (Rectangle) {0, 0, 0, 0};

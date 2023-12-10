@@ -289,7 +289,7 @@ void drawPlacar(EndMenu* endmenu) {
 }
 
 void endMenuLoop(EndMenu* endmenu, Placar* placar) {
-    UpdateMusicStream(endmenu->music);
+    if (endmenu->winner) UpdateMusicStream(endmenu->music);
     BeginDrawing();
     ClearBackground(DARKGRAY);
     if (endmenu->winner == 1) {

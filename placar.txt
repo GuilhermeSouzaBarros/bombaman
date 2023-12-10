@@ -1,5 +1,0 @@
-f VS g
-Vitórias de f: 0
-Vitórias de g: 1
-Empates: 0
-
