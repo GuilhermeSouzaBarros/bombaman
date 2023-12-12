@@ -107,7 +107,10 @@ void updateGame(Game* game) {
         updatePlayersPos(game);
         if (game->map.map_num == 1 && game->time > 45) {
             updateDelirium(game);
-            colDeliriumPlayer(game, &game->players[0], 0);
+            if (game->map.delirium_pickup_steal_info[3] == 0) {
+                colDeliriumPlayer(game, &game->players[0], 0);
+                colDeliriumPlayer(game, &game->players[1], 1);
+            }
         }
 
         colPlayerPickups(game, &game->players[0]);

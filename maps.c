@@ -237,7 +237,7 @@ int updateDeliriumMovement(Game* game, Rectangle* delirium, float* cord, int spe
 
 void updateDelirium(Game* game) {
     if (game->time < 45) return;
-    if (GetTime() - game->map.delirium_steal_time > 20 &&
+    if (game->time - game->map.delirium_steal_time > 20 &&
         game->map.delirium_pickup_steal_info[3] == 1) {
         int p_indice = game->map.delirium_pickup_steal_info[4];
         game->players[p_indice].speed += game->map.delirium_pickup_steal_info[0];
@@ -310,7 +310,7 @@ void map1Setup(Map* map) {
     for (int i = 0; i < 4; i++) {
         map->delirium_pickup_steal_info[i] = 0;
     }
-    map->delirium_steal_time = GetTime();
+    map->delirium_steal_time = 0;
 }
 
 void mapSetup(Game* game, int num_map) {

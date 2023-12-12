@@ -1,0 +1,25 @@
+afs VS eee
+Vitórias de afs: 3
+Vitórias de eee: 2
+Empates: 0
+
+hells VS yeah
+Vitórias de hells: 1
+Vitórias de yeah: 1
+Empates: 0
+
+a VS f
+Vitórias de a: 1
+Vitórias de f: 0
+Empates: 0
+
+a VS g
+Vitórias de a: 0
+Vitórias de g: 0
+Empates: 1
+
+a VS g
+Vitórias de a: 1
+Vitórias de g: 0
+Empates: 0
+

@@ -134,7 +134,7 @@ void colDeliriumPlayer(Game* game, Player* player, int p) {
         player->speed = 2;
         player->num_bombs = 1;
         player->bomb_distance = 1;
-        game->map.delirium_steal_time = GetTime();
+        game->map.delirium_steal_time = game->time;
     }
 }
 
