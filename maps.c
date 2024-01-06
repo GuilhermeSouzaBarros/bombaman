@@ -255,22 +255,35 @@ void updateDelirium(Game* game) {
                            pow(game->players[0].pos.y - game->map.especial->y, 2));
         int dist_p2 = sqrt(pow(game->players[1].pos.x - game->map.especial->x, 2) +
                            pow(game->players[1].pos.y - game->map.especial->y, 2));
-        Player player;
+        Player closestPlayer;
         if (dist_p1 > dist_p2) {
-            player = game->players[1];
+            closestPlayer = game->players[1];
         } else {
-            player = game->players[0];
+            closestPlayer = game->players[0];
         }
-        if (player.pos.x > game->map.especial->x) {
+        if (closestPlayer.pos.x > game->map.especial->x) {
             updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, 2);
-        } else if (player.pos.x < game->map.especial->x) {
+        } else if (closestPlayer.pos.x < game->map.especial->x) {
             updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).x, -2);
         }   
-        if (player.pos.y > game->map.especial->y) {
+        if (closestPlayer.pos.y > game->map.especial->y) {
             updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, 2);
-        } else if (player.pos.y < game->map.especial->y) {
+        } else if (closestPlayer.pos.y < game->map.especial->y) {
             updateDeliriumMovement(game, game->map.especial, &(*game->map.especial).y, -2);
         };
+        for (int i = 0; i < 2; i++) {
+            if (CheckCollisionRecs(game->players[i].pos, *game->map.especial)) {
+                game->map.delirium_pickup_steal_info[0] = game->players[i].speed - 2;
+                game->map.delirium_pickup_steal_info[1] = game->players[i].num_bombs - 1;
+                game->map.delirium_pickup_steal_info[2] = game->players[i].bomb_distance - 1;
+                game->map.delirium_pickup_steal_info[3] = 1;
+                game->map.delirium_pickup_steal_info[4] = i;
+                game->players[i].speed = 2;
+                game->players[i].num_bombs = 1;
+                game->players[i].bomb_distance = 1;
+                game->map.delirium_steal_time = game->time;
+            }
+        }
     }
 }
 
@@ -331,8 +344,7 @@ void drawMap0 (Map *map) {
             if (i == 1) {
                 DrawTexturePro(map->sprite[0], (Rectangle){20, 80, 20, 20},
                 map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
-            }
-            if (i == 13) {
+            } else if (i == 13) {
                 DrawTexturePro(map->sprite[0], (Rectangle){20, 120, 20, 20},
                 map->barriers.barriers[i][j], (Vector2){0, 0}, 0, WHITE);
             }
@@ -354,12 +366,16 @@ void drawMap1(Map* map) {
 
 }
 
-void draw_map(Map *map){
-    if (map->map_num == 0) { 
-        drawMap0(map);
-        return;
+void drawMap(Game* game){
+    Map* map = &game->map;
+    switch (map->map_num) {
+        case 0: 
+            drawMap0(map);
+            break;
+        case 1:
+            drawMap1(map);
+            break;
     }
-    drawMap1(map);
 }
 
 void drawEspecials(Game* game) {

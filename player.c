@@ -138,38 +138,41 @@ void colDeliriumPlayer(Game* game, Player* player, int p) {
     }
 }
 
-void drawPlayerSprite(Game* game, Player* player) {
-    if (player->vivo) {
-        DrawTexturePro(player->sprite.self,
-                   (Rectangle){player->sprite.x_dif * player->is_moving * (((int)(((2 * player->speed) * game->time)) % 4)),
-                               player->sprite.y_dif * player->facing, player->sprite.x_size, player->sprite.y_size},
-                   (Rectangle){player->pos.x, player->pos.y, 30, 36 + player->sprite.offset.y},
-                   player->sprite.offset,
-                   0, WHITE);
-    } else {
-        int frame = (int)(2 * game->end_time) - (int)(2 * game->time);
-        switch (frame) {
-            case 5 ... 6:
-                DrawTexturePro(player->sprite.self,
-                   (Rectangle){0, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
-                   (Rectangle){player->pos.x, player->pos.y, 30, 36},
-                   player->sprite.offset,
-                   0, WHITE);
-                break;
-            case 4:
-                DrawTexturePro(player->sprite.self,
-                    (Rectangle){player->sprite.x_dif, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
+void drawPlayersSprite(Game* game) {
+    for (int i = 0; i < 2; i++) {
+        Player* player = &game->players[i];
+        if (player->vivo) {
+            DrawTexturePro(player->sprite.self,
+                    (Rectangle){player->sprite.x_dif * player->is_moving * (((int)(((2 * player->speed) * game->time)) % 4)),
+                                player->sprite.y_dif * player->facing, player->sprite.x_size, player->sprite.y_size},
+                    (Rectangle){player->pos.x, player->pos.y, 30, 36 + player->sprite.offset.y},
+                    player->sprite.offset,
+                    0, WHITE);
+        } else {
+            int frame = (int)(2 * game->end_time) - (int)(2 * game->time);
+            switch (frame) {
+                case 5 ... 6:
+                    DrawTexturePro(player->sprite.self,
+                    (Rectangle){0, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
                     (Rectangle){player->pos.x, player->pos.y, 30, 36},
                     player->sprite.offset,
                     0, WHITE);
-                break;
-            case 0 ... 3:
-                DrawTexturePro(player->sprite.self,
-                               player->sprite.death_frame,
-                    (Rectangle){player->pos.x, player->pos.y, 36, 36},
-                    player->sprite.offset,
-                    0, WHITE);
-                break;
+                    break;
+                case 4:
+                    DrawTexturePro(player->sprite.self,
+                        (Rectangle){player->sprite.x_dif, player->sprite.y_dif * 4, player->sprite.x_size, player->sprite.y_size},
+                        (Rectangle){player->pos.x, player->pos.y, 30, 36},
+                        player->sprite.offset,
+                        0, WHITE);
+                    break;
+                case 0 ... 3:
+                    DrawTexturePro(player->sprite.self,
+                                player->sprite.death_frame,
+                        (Rectangle){player->pos.x, player->pos.y, 36, 36},
+                        player->sprite.offset,
+                        0, WHITE);
+                    break;
+            }
         }
     }
 }

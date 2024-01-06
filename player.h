@@ -6,10 +6,10 @@
 #ifndef PLAYER
 #define PLAYER
 
-void initPlayer       (Game* game, Player* player, char* nome, Rectangle pos, Color color);
-void colPlayerPickups (Game* game, Player* player);
-void colDeliriumPlayer(Game* game, Player* player, int p);
-void updatePlayersPos (Game* game);
-void drawPlayerSprite (Game* game, Player* player);
+void initPlayer        (Game* game, Player* player, char* nome, Rectangle pos, Color color);
+void colPlayerPickups  (Game* game, Player* player);
+void colDeliriumPlayer (Game* game, Player* player, int p);
+void updatePlayersPos  (Game* game);
+void drawPlayersSprite (Game* game);
 
 #endif

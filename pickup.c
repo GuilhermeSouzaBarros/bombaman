@@ -23,30 +23,36 @@ void initPickup(Pickup* p, int x, int y) {
     type %= 10;
 }
 
-void colPlayerPickups(Game* game, Player* player) {
-    for (int i = 0; i < game->total_pickups; i++) {
-        if (CheckCollisionRecs(player->pos, game->pickups[i].pos)) {
-            switch (game->pickups[i].type) {
-                case 0:
-                    player->speed++;
-                    break;
-                case 1:
-                    player->num_bombs++;
-                    break;
-                case 2:
-                    player->bomb_distance++;
-                    break;
+void colPlayerPickups(Game* game) {
+    for (int i = 0; i < 2; i++) {
+        Player* player = &game->players[i];
+        for (int j = 0; j < game->total_pickups; j++) {
+            if (CheckCollisionRecs(player->pos, game->pickups[j].pos)) {
+                switch (game->pickups[j].type) {
+                    case 0:
+                        player->speed++;
+                        break;
+                    case 1:
+                        player->num_bombs++;
+                        break;
+                    case 2:
+                        player->bomb_distance++;
+                        break;
+                }
+                game->pickups[j] = game->pickups[game->total_pickups - 1]; 
+                game->pickups[game->total_pickups-1].pos = (Rectangle){-40, -40, 0, 0}; 
+                game->total_pickups -= 1;
+                PlaySound(game->sounds[2]);
+                return;
             }
-            game->pickups[i] = game->pickups[game->total_pickups - 1]; 
-            game->pickups[game->total_pickups-1].pos = (Rectangle){-40, -40, 0, 0}; 
-            game->total_pickups -= 1;
-            PlaySound(game->sounds[2]);
-            return;
         }
     }
 }
 
-void drawPickup(Texture2D* sprite, Pickup* pickups, int n) {
+void drawPickup(Game* game) {
+    Texture2D* sprite = &game->pickups_sprite;
+    Pickup* pickups = game->pickups;
+    int n = game->total_pickups;
     for (int i = 0; i < n; i++) {
         if (pickups[i].visible) {
             int floating;

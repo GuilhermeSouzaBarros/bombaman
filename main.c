@@ -26,6 +26,7 @@ int main(void) {
     Font font = LoadFont("font/setback.png");
 
     Placar placar = {0, 0, 0, 0, 0, 0, 0};
+
     while(!WindowShouldClose()) {
         Menu* menu = initMenu(&placar, &font);
         while (!placar.rematch && !menu->game_start && !WindowShouldClose()) {
@@ -36,7 +37,7 @@ int main(void) {
         freeMenu(menu);
         
         while (!(game->exit_game || WindowShouldClose())) {
-            gameLoop(game, &placar);
+            gameLoop(game);
         }
 
         EndMenu* endmenu = initEndMenu(game, &placar, &font);
@@ -51,6 +52,7 @@ int main(void) {
         
         freeEndMenu(endmenu);
     }
+
     UnloadImage(icon);
     UnloadFont(font);
     CloseAudioDevice();

@@ -23,3 +23,48 @@ Vitórias de a: 1
 Vitórias de g: 0
 Empates: 0
 
+apelidos VS jogador
+Vitórias de apelidos: 0
+Vitórias de jogador: 1
+Empates: 0
+
+ff VS aa
+Vitórias de ff: 1
+Vitórias de aa: 0
+Empates: 0
+
+guizim VS flavio
+Vitórias de guizim: 7
+Vitórias de flavio: 1
+Empates: 0
+
+gislene VS flaviawww
+Vitórias de gislene: 21
+Vitórias de flaviawww: 1
+Empates: 0
+
+gui VS cida
+Vitórias de gui: 2
+Vitórias de cida: 0
+Empates: 0
+
+playa 1 VS marcelin
+Vitórias de playa 1: 1
+Vitórias de marcelin: 1
+Empates: 0
+
+p1 VS p2
+Vitórias de p1: 0
+Vitórias de p2: 2
+Empates: 0
+
+f VS g
+Vitórias de f: 1
+Vitórias de g: 0
+Empates: 0
+
+g VS h
+Vitórias de g: 1
+Vitórias de h: 0
+Empates: 0
+

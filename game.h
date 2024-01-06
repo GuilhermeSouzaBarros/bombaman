@@ -9,7 +9,6 @@
 
 Game* initGame(int map, char* p1_nome, char* p2_nome, Font* font);
 void freeGame(Game* game);
-void gameLoop(Game *g, Placar* placar);
-
+void gameLoop(Game *g);
 
 #endif

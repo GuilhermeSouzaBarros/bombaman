@@ -99,13 +99,16 @@ void drawExplosionTexture(Texture2D* sprite, Bomb* bomb) {
         target, (Vector2){0, 0}, 0, WHITE);
 }
 
-void draw_bomb(Player* player){
-    for(int i = 0; i < player->num_bombs; i++){
-        if(player->bombs[i].isActive == 1){
-            if (player->bombs[i].isActiveFirstFrame && !player->bombs[i].hasExploded) {
-                drawBombTexture(&player->sprite_bomb, &player->bombs[i]);
-            } else {
-                drawExplosionTexture(&player->sprite_explosion, &player->bombs[i]);
+void drawBombs(Game* game) {
+    Player* players = game->players;
+    for (int i = 0; i < 2; i++) {
+        for(int j = 0; j < players[i].num_bombs; j++){
+            if(players[i].bombs[j].isActive){
+                if (!players[i].bombs[j].hasExploded) {
+                    drawBombTexture(&players[i].sprite_bomb, &players[i].bombs[j]);
+                } else {
+                    drawExplosionTexture(&players[i].sprite_explosion, &players[i].bombs[j]);
+                }
             }
         }
     }

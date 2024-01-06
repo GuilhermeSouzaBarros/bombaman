@@ -72,24 +72,22 @@ void freeGame(Game* game) {
 }
 
 void endGame(Game* game) {
-    if (game->end_game == 0) {
-        game->end_time = game->time + 3;
-        game->end_game = 1;
-        StopMusicStream(game->music);
-    }
-    if (game->time - game->end_time > 0) {
-        game->exit_game = 1;
-    }
+    game->end_time = game->time + 3;
+    game->end_game = 1;
+    StopMusicStream(game->music);
 }
 
 void timeOut(Game* game) {
-    endGame(game);
-    for (int i = 0; i < 5; i++) {
-        game->players[0].bombs[i].fastExplode = 1;
-        game->players[1].bombs[i].fastExplode = 1;
+    if (!game->end_game) {
+        endGame(game);
+        for (int i = 0; i < 5; i++) {
+            game->players[0].bombs[i].fastExplode = 1;
+            game->players[1].bombs[i].fastExplode = 1;
+        }
     }
     for (int i = 0; i < 5; i ++) {
-        if (game->players[0].bombs[i].isActive || game->players[1].bombs[i].isActive) {
+        if (game->players[0].bombs[i].isActive ||
+            game->players[1].bombs[i].isActive) {
             break;
         }
         game->players[0].vivo = 0;
@@ -97,38 +95,36 @@ void timeOut(Game* game) {
     }
 }
 
-void updateGame(Game* game) {
+void updateMatch(Game* game) {
     UpdateMusicStream(game->music);
-    game->time = GetTime() - game->start_time;
     if (game->time < 0) return;
-    if (game->time > 120) timeOut(game);
 
-    if (game->end_game == 0) {
-        updatePlayersPos(game);
-        if (game->map.map_num == 1 && game->time > 45) {
-            updateDelirium(game);
-            if (game->map.delirium_pickup_steal_info[3] == 0) {
-                colDeliriumPlayer(game, &game->players[0], 0);
-                colDeliriumPlayer(game, &game->players[1], 1);
-            }
-        }
+    updatePlayersPos(game);
+    colPlayerPickups(game);
+    if (game->map.map_num == 1) updateDelirium(game);
 
-        colPlayerPickups(game, &game->players[0]);
-        colPlayerPickups(game, &game->players[1]);
-        if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[0].pos) ||
-            colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[0].pos)) {
-            game->players[0].vivo = 0;
-            endGame(game);
-        }
-        if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[1].pos) ||
-            colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[1].pos)) {
-            game->players[1].vivo = 0;
-            endGame(game);
-        }
-    } else {
+    if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[0].pos) ||
+        colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[0].pos)) {
+        game->players[0].vivo = 0;
         endGame(game);
     }
+    if (colExplosion(game->players[0].bombs, game->players[0].num_bombs, game->players[1].pos) ||
+        colExplosion(game->players[1].bombs, game->players[1].num_bombs, game->players[1].pos)) {
+        game->players[1].vivo = 0;
+        endGame(game);
+    }
+}
+
+void updateGame(Game* game) {
+    game->time = GetTime() - game->start_time;
+    if (game->time > 120) timeOut(game);
+
     updateBombs(game);
+    if (!game->end_game) {
+        updateMatch(game);
+    } else if (game->time - game->end_time >= 0) {
+        game->exit_game = 1;
+    }
 }
 
 void drawPlayerInfo(Game* game, Player* player, Vector2 pos) {
@@ -142,11 +138,9 @@ void drawPlayerInfo(Game* game, Player* player, Vector2 pos) {
     (Vector2){20, 20}, 0, WHITE);
     DrawTextEx(*game->font, TextFormat(" %d", player->speed), (Vector2){pos.x + 80, pos.y + 55}, 40, 3, WHITE);
 
-
     DrawTexturePro(game->pickups_sprite, (Rectangle){420, 80, 120, 160}, (Rectangle){pos.x + 30, pos.y + 115, 40, 40},
     (Vector2){10, 18}, 0, WHITE);
     DrawTextEx(*game->font, TextFormat(" %d", player->bomb_distance), (Vector2){pos.x + 80, pos.y + 105}, 40, 3, WHITE);
-
 
     DrawTexturePro(game->pickups_sprite, (Rectangle){634, 0, 320, 180}, (Rectangle){pos.x + 30, pos.y + 145, 40, 40},
     (Vector2){10, 5}, 0, WHITE);
@@ -174,24 +168,8 @@ void drawSideMenu(Game* game) {
     drawPlayerInfo(game, &game->players[1], (Vector2){610, 350});
 }
 
-void DrawGame(Game *game, Placar* placar) {
-    BeginDrawing();
-    ClearBackground((Color){181, 85, 21, 255});
-
-    draw_map(&game->map);
-    drawPickup(&game->pickups_sprite, game->pickups, game->total_pickups);
-
-    draw_bomb(&game->players[0]);
-    draw_bomb(&game->players[1]);
-
-    drawPlayerSprite(game, &game->players[0]);
-    drawPlayerSprite(game, &game->players[1]);
-
-    drawEspecials(game);
-
-    drawSideMenu(game);
-
-    if (game->time < 1) {
+void drawTimer(Game *game) {
+    if (game->time <= 0) {
         char text[10];
         if ((int)game->time == 0 && game->time > 0) {
             strcpy(text, "IT'S ON!");
@@ -203,10 +181,24 @@ void DrawGame(Game *game, Placar* placar) {
         }
         drawTextBox(game->font, text, (Vector2){300, 300}, 100, 10, WHITE);
     }
+}
+
+void DrawGame(Game *game) {
+    BeginDrawing();
+    ClearBackground((Color){181, 85, 21, 255}); // Map 0 color
+
+    drawMap           (game);
+    drawPickup        (game);
+    drawBombs         (game);
+    drawPlayersSprite (game);
+    drawEspecials     (game);
+    drawSideMenu      (game);
+    drawTimer         (game);
+
     EndDrawing();
 }
 
-void gameLoop(Game* game, Placar* placar) {
-    DrawGame(game, placar);
+void gameLoop(Game* game) {
+    DrawGame(game);
     updateGame(game);
 }
