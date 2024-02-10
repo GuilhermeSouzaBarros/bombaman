@@ -7,3 +7,4 @@ structs.o
 menu.o
 pickup.o
 player.o
+placar.txt

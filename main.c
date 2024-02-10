@@ -14,18 +14,18 @@
 
 int main(void) {
     srand(time(NULL));
-    
+
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "SUPER BOMBAMAN");
     SetTargetFPS(60);
     SetExitKey(KEY_DELETE);
+
     Image icon = LoadImage("images/bob-omb-icon.png");
     SetWindowIcon(icon);
 
-    InitAudioDevice();
-
     Font font = LoadFont("font/setback.png");
-
     Placar placar = {0, 0, 0, 0, 0, 0, 0};
+
+    InitAudioDevice();
 
     while(!WindowShouldClose()) {
         Menu* menu = initMenu(&placar, &font);
@@ -34,6 +34,7 @@ int main(void) {
         }
 
         Game* game = initGame(placar.next_map, menu->p1_nome, menu->p2_nome, &font);
+        
         freeMenu(menu);
         
         while (!(game->exit_game || WindowShouldClose())) {
@@ -41,6 +42,7 @@ int main(void) {
         }
 
         EndMenu* endmenu = initEndMenu(game, &placar, &font);
+        
         freeGame(game);
         
         while(!endmenu->exit && !IsKeyDown(KEY_ENTER) && !WindowShouldClose()) {
@@ -57,5 +59,6 @@ int main(void) {
     UnloadFont(font);
     CloseAudioDevice();
     CloseWindow();
+
     return 0;
 }

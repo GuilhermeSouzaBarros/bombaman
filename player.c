@@ -47,6 +47,17 @@ void initPlayer(Game* game, Player* player, char* nome, Rectangle pos, Color col
     player->color = color;
 }
 
+void freePlayer (Player* player) {
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 2; j++) {
+            UnloadSoundAlias(player->bombs[i].sounds[j]);
+        }
+    }
+    UnloadTexture(player->sprite.self);
+    UnloadTexture(player->sprite_bomb);
+    UnloadTexture(player->sprite_explosion);
+}
+
 int updateMovement(Game* game, int player, float* cord, int speed) {
     while (speed) {
         int col=0;

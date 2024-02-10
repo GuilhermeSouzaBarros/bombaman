@@ -44,30 +44,29 @@ Game* initGame(int map, char* p1_nome, char* p2_nome, Font* font){
 
     mapSetup(g, map);
     g->font = font;
+
     return g;
 }
 
 void freeGame(Game* game) {
     for (int i = 0; i < 2; i++) {
-        UnloadTexture(game->players[i].sprite.self);
-        UnloadTexture(game->players[i].sprite_bomb);
-        UnloadTexture(game->players[i].sprite_explosion);
-        for (int j = 0; j < 5; j++) {
-            for (int k = 0; k < 2; k++) {
-                UnloadSoundAlias(game->players[i].bombs[j].sounds[k]);
-            }
-        }
+        freePlayer(&game->players[i]);
     }
+
     UnloadTexture(game->pickups_sprite);
     UnloadMusicStream(game->music);
+
     for (int i = 0; i < 4; i++) {
         UnloadSound(game->sounds[i]);
     }
+
     for (int i = 0; i < 1 + 2 * game->map.map_num; i++) { // map 0: 0, map 1: 3
         UnloadTexture(game->map.sprite[i]);
     }
+
     free(game->map.sprite);
     free(game->map.especial);
+
     free(game);
 }
 

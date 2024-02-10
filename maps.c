@@ -123,8 +123,7 @@ void baseSetup(Game* game){
                     if (i != j || (i == j && game->total_pickups < 9));
                     initPickup(&game->pickups[game->total_pickups], 14-i, 14-j);
                     map->barriers.types[14-i][14-j] = 3;
-                    game->total_pickups += 1;
-                    
+                    game->total_pickups += 1;    
                 }
             }
             atual++;
@@ -135,7 +134,7 @@ void baseSetup(Game* game){
 
 void map0SpriteSetup(Map* map) {
     map->sprite = (Texture2D*)malloc(sizeof(Texture2D));
-    map->sprite[0] = LoadTexture("sprites/hotlandSprites.png");
+    *(map->sprite) = LoadTexture("sprites/hotlandSprites.png");
     for (int i = 0; i < map->num_barriers_line; i++) {
         for (int j = 0; j < map->num_barriers_coln; j++) {
             switch(map->barriers.types[i][j]) {
